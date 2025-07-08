@@ -4,14 +4,14 @@ A rudimentary scripting language implemented in C#.
 Software contributors: Damien Otis. 
 
 ## Technical information
-Version: 0.0.2
-Supported platforms: Windows 
+Version: 0.0.2  
+Supported platforms: Windows  
 Known supported IDE: Visual Studio Community 2022
 
 ## Structure
 The solution contains 3 projects: 
 
-### CraftCode
+### CraftyCode
 A class library containing the main elements of the software. Included are classes for exceptions, parser, lexical analiser, tokeniser, a bytecode compiler and virtual machine, an operation stack. 
 
 ### CraftyCompiler
