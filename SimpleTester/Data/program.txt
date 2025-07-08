@@ -1,0 +1,21 @@
+﻿bool isfun;
+float many = 55;
+float few = 1;
+float targetNumber = 1000 * (2 + 10);
+
+if ( few > 100 ){
+	int subIntRightHere = 50;
+}
+
+int x;
+
+while ( x < 100 )
+{
+	
+}
+
+x = 12 + 6;
+
+x = 5;
+
+string tester = "Damien?";
