@@ -15,11 +15,19 @@ namespace SimpleTester
 			string input = null;
 			string fileContents = "";
 
+			string input_filename = "Data/program.txt";
+			string output_filename = "Data/program.ccx";
+
+			if (args.Length >= 2){
+				input_filename = args[ 0 ];
+				output_filename = args[ 1 ];
+			}
+
 			Stopwatch stopwatch = new Stopwatch();
 
-			if ( File.Exists( Path.GetFullPath( args[0] ) ) )
+			if ( File.Exists( Path.GetFullPath( input_filename ) ) )
 			{
-				using ( StreamReader re = File.OpenText( Path.GetFullPath( args[0] ) ) )
+				using ( StreamReader re = File.OpenText( Path.GetFullPath( input_filename ) ) )
 				{
 					while ( ( input = re.ReadLine( ) ) != null )
 					{
@@ -30,7 +38,7 @@ namespace SimpleTester
 
 				try
 				{
-					engine.Compile( fileContents, args[1] );
+					engine.Compile( fileContents, output_filename );
 				}
 				catch ( CraftyException ke )
 				{
@@ -40,7 +48,7 @@ namespace SimpleTester
 			}
 			else
 			{
-				Console.WriteLine( "Invalid file {0}.", Path.GetFullPath( args[0] ) );
+				Console.WriteLine( "Invalid file {0}.", Path.GetFullPath( input_filename ) );
 			}
 
 			Console.WriteLine( "Finished." );

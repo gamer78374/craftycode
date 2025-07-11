@@ -131,11 +131,11 @@ namespace CraftyCode
 
 			for ( int i = 2; i < Branches.Count; i++ )
 			{
-				if ( header == 0 && Branches[i].IsRuleBranch && Branches[i].BranchRule.Name == "assignstatement" )
+				if ( header == 0 && Branches[i].IsRuleBranch && Branches[i].BranchRule.Name == "assign_statement" )
 				{
 					( (AssignStatementBranch) Branches[i] ).Do( );
 				}
-				else if ( header == 1 && Branches[i].IsRuleBranch && Branches[i].BranchRule.Name == "booleanexpression" )
+				else if ( header == 1 && Branches[i].IsRuleBranch && Branches[i].BranchRule.Name == "boolean_expression" )
 				{
 					booleanRule = Branches[i] as BooleanExpressionBranch;
 				}
@@ -143,11 +143,11 @@ namespace CraftyCode
 				{
 					expressionBranch = Branches[i] as ExpressionBranch;
 				}
-				if ( header <= 2 && Branches[i].IsTokenBranch && Branches[i].BranchToken.Name == "ENDSTATEMENT" )
+				if ( header <= 2 && Branches[i].IsTokenBranch && Branches[i].BranchToken.Name == "END_STATEMENT" )
 				{
 					header++;
 				}
-				if ( Branches[i].IsTokenBranch && Branches[i].BranchToken.Name == "CURLYOPEN" )
+				if ( Branches[i].IsTokenBranch && Branches[i].BranchToken.Name == "CURLY_OPEN" )
 				{
 					startAt = i;
 					break;

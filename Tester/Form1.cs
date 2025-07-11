@@ -64,7 +64,7 @@ namespace Tester
 				{
 					tooltip = branch.BranchToken.FloatValue.ToString( );
 				}
-				else if ( branch.BranchToken.Name == "TYPEIDENTIFIER" )
+				else if ( branch.BranchToken.Name == "TYPE_IDENTIFIER" )
 				{
 					tooltip = branch.BranchToken.StringValue;
 				}

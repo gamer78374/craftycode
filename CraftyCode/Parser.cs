@@ -64,70 +64,70 @@ namespace CraftyCode
 			try
 			{
 				rules = new Dictionary<string, ParsingRule>( );
-				rules.Add( "program", new ParsingRule( "statementlist" ) );
-				rules.Add( "statementlist", new ParsingRule( "statement+" ) );
-				rules.Add( "statement", new ParsingRule( "ENDSTATEMENT | solidblock | ifrootstatement | triggerstatement | foreachstatement | forstatement | whilestatement | functiondeclare | assignstatement ENDSTATEMENT | variable_declaration_statement ENDSTATEMENT | expression ENDSTATEMENT" ) );
+				rules.Add( "program", new ParsingRule( "statement_list" ) );
+				rules.Add( "statement_list", new ParsingRule( "statement+" ) );
+				rules.Add( "statement", new ParsingRule( "END_STATEMENT | solid_block | if_root_statement | trigger_statement | foreach_statement | for_statement | while_statement | function_declare | assign_statement END_STATEMENT | variable_declaration_statement END_STATEMENT | expression END_STATEMENT" ) );
 
-				rules.Add( "variable_declaration_statement", new ParsingRule( "TYPEIDENTIFIER IDENTIFIER assign?" ) );
-				rules.Add( "assign", new ParsingRule( "assignoperators expression" ) );
+				rules.Add( "variable_declaration_statement", new ParsingRule( "TYPE_IDENTIFIER IDENTIFIER assign?" ) );
+				rules.Add( "assign", new ParsingRule( "assignment_operators expression" ) );
 
-				rules.Add( "functiondeclare", new ParsingRule( "TYPEIDENTIFIER IDENTIFIER OPENBRACKET function_argument_declaration? CLOSEBRACKET CURLYOPEN functionbody? CURLYCLOSE" ) );
-				rules.Add( "functionbody", new ParsingRule( "returnstatement+ | statement+" ) );
-				rules.Add( "function_argument_declaration", new ParsingRule( "TYPEIDENTIFIER IDENTIFIER function_argument_declaration_more*" ) );
-				rules.Add( "function_argument_declaration_more", new ParsingRule( "COMMA TYPEIDENTIFIER IDENTIFIER" ) );
+				rules.Add( "function_declare", new ParsingRule( "TYPE_IDENTIFIER IDENTIFIER BRACKET_OPEN function_argument_declaration? BRACKET_CLOSE CURLY_OPEN function_body? CURLY_CLOSE" ) );
+				rules.Add( "function_body", new ParsingRule( "return_statement+ | statement+" ) );
+				rules.Add( "function_argument_declaration", new ParsingRule( "TYPE_IDENTIFIER IDENTIFIER function_argument_declaration_more*" ) );
+				rules.Add( "function_argument_declaration_more", new ParsingRule( "COMMA TYPE_IDENTIFIER IDENTIFIER" ) );
 
-				rules.Add( "assignstatement", new ParsingRule( "IDENTIFIER assign" ) );
+				rules.Add( "assign_statement", new ParsingRule( "IDENTIFIER assign" ) );
 
-				rules.Add( "assignoperators", new ParsingRule( "ASSIGN | PLUSEQUAL | MINUSEQUAL | TIMESEQUAL | DIVIDEEQUAL | MODEQUAL" ) );
+				rules.Add( "assignment_operators", new ParsingRule( "ASSIGN | PLUS_EQUAL | MINUS_EQUAL | TIMES_EQUAL | DIVIDE_EQUAL | MOD_EQUAL" ) );
 
-				rules.Add( "triggerstatement", new ParsingRule( "WHEN OPENBRACKET IDENTIFIER POINTRIGHT IDENTIFIER.event CLOSEBRACKET conditionstatement? CURLYOPEN statementlist? CURLYCLOSE" ) );
-				rules.Add( "conditionstatement", new ParsingRule( "AND OPENBRACKET booleanexpression CLOSEBRACKET" ) );
-				rules.Add( "forstatement_third", new ParsingRule( "incrementexpression | decrementexpression | assignstatement" ) );
-				rules.Add( "forstatement", ParsingRule.CreateBlockRule( "FOR OPENBRACKET variable_declaration_statement? ENDSTATEMENT booleanexpression? ENDSTATEMENT forstatement_third? CLOSEBRACKET CURLYOPEN statementlist? CURLYCLOSE" ) );
-				rules.Add( "foreachstatement", ParsingRule.CreateBlockRule( "FOREACH OPENBRACKET TYPEIDENTIFIER IDENTIFIER IN IDENTIFIER CLOSEBRACKET CURLYOPEN statementlist? CURLYCLOSE" ) );
-				rules.Add( "whilestatement", ParsingRule.CreateBlockRule( "WHILE OPENBRACKET booleanexpression CLOSEBRACKET CURLYOPEN statementlist? CURLYCLOSE" ) );
-				rules.Add( "solidblock", ParsingRule.CreateBlockRule( "SOLID CURLYOPEN statementlist? CURLYCLOSE" ) );
-				rules.Add( "ifrootstatement", new ParsingRule( "ifstatement elseifstatement* elsestatement?" ) );
-				rules.Add( "ifstatement", ParsingRule.CreateBlockRule( "IF OPENBRACKET booleanexpression CLOSEBRACKET CURLYOPEN statementlist? CURLYCLOSE" ) ); //elseifstatement* elsestatement?
-				rules.Add( "elseifstatement", ParsingRule.CreateBlockRule( "ELSE IF OPENBRACKET booleanexpression CLOSEBRACKET CURLYOPEN statementlist? CURLYCLOSE" ) );
-				rules.Add( "elsestatement", ParsingRule.CreateBlockRule( "ELSE CURLYOPEN statementlist? CURLYCLOSE" ) );
-				rules.Add( "returnstatement", new ParsingRule( "RETURN expression? ENDSTATEMENT" ) );
-				rules.Add( "expression", ParsingRule.CreateWildCardBlock( "functioncall | incrementexpression | arithmatic | booleanexpression | decrementexpression | STRING" ) ); //arithmatic 
-				rules.Add( "non_boolean_expression", new ParsingRule( "arithmatic | incrementexpression | decrementexpression | STRING" ) ); //arithmatic |
-				//compoundexpression | 
-				rules.Add( "compoundexpression", new ParsingRule( "OPENBRACKET expression CLOSEBRACKET" ) );
+				rules.Add( "trigger_statement", new ParsingRule( "WHEN BRACKET_OPEN IDENTIFIER POINT_RIGHT IDENTIFIER.event BRACKET_CLOSE conditional_statement? CURLY_OPEN statement_list? CURLY_CLOSE" ) );
+				rules.Add( "conditional_statement", new ParsingRule( "AND BRACKET_OPEN boolean_expression BRACKET_CLOSE" ) );
+				rules.Add( "for_statement_third", new ParsingRule( "increment_expression | decrement_expression | assign_statement" ) );
+				rules.Add( "for_statement", ParsingRule.CreateBlockRule( "FOR BRACKET_OPEN variable_declaration_statement? END_STATEMENT boolean_expression? END_STATEMENT for_statement_third? BRACKET_CLOSE CURLY_OPEN statement_list? CURLY_CLOSE" ) );
+				rules.Add( "foreach_statement", ParsingRule.CreateBlockRule( "FOREACH BRACKET_OPEN TYPE_IDENTIFIER IDENTIFIER IN IDENTIFIER BRACKET_CLOSE CURLY_OPEN statement_list? CURLY_CLOSE" ) );
+				rules.Add( "while_statement", ParsingRule.CreateBlockRule( "WHILE BRACKET_OPEN boolean_expression BRACKET_CLOSE CURLY_OPEN statement_list? CURLY_CLOSE" ) );
+				rules.Add( "solid_block", ParsingRule.CreateBlockRule( "SOLID CURLY_OPEN statement_list? CURLY_CLOSE" ) );
+				rules.Add( "if_root_statement", new ParsingRule( "if_statement elseif_statement* else_statement?" ) );
+				rules.Add( "if_statement", ParsingRule.CreateBlockRule( "IF BRACKET_OPEN boolean_expression BRACKET_CLOSE CURLY_OPEN statement_list? CURLY_CLOSE" ) ); //elseif_statement* else_statement?
+				rules.Add( "elseif_statement", ParsingRule.CreateBlockRule( "ELSE IF BRACKET_OPEN boolean_expression BRACKET_CLOSE CURLY_OPEN statement_list? CURLY_CLOSE" ) );
+				rules.Add( "else_statement", ParsingRule.CreateBlockRule( "ELSE CURLY_OPEN statement_list? CURLY_CLOSE" ) );
+				rules.Add( "return_statement", new ParsingRule( "RETURN expression? END_STATEMENT" ) );
+				rules.Add( "expression", ParsingRule.CreateWildCardBlock( "function_call | increment_expression | arithmatic | boolean_expression | decrement_expression | STRING" ) ); //arithmatic 
+				rules.Add( "non_boolean_expression", new ParsingRule( "arithmatic | increment_expression | decrement_expression | STRING" ) ); //arithmatic |
+				//compound_expression | 
+				rules.Add( "compound_expression", new ParsingRule( "BRACKET_OPEN expression BRACKET_CLOSE" ) );
 
 				//rules.Add( "numericexpression", new ParsingRule( "arithmatic" ) );
 
-				//rules.Add( "booleanext", new ParsingRule( "AND booleanexpression | OR booleanexpression" ) );
+				//rules.Add( "booleanext", new ParsingRule( "AND boolean_expression | OR boolean_expression" ) );
 
-				rules.Add( "functioncall", new ParsingRule( "IDENTIFIER OPENBRACKET function_call_args? CLOSEBRACKET" ) );
+				rules.Add( "function_call", new ParsingRule( "IDENTIFIER BRACKET_OPEN function_call_args? BRACKET_CLOSE" ) );
 				rules.Add( "function_call_args", new ParsingRule( "expression function_call_args_more*" ) );
 				rules.Add( "function_call_args_more", new ParsingRule( "COMMA expression" ) );
 
-				rules.Add( "compoundbooleanexpression", new ParsingRule( "OPENBRACKET booleanexpression CLOSEBRACKET" ) );
-				rules.Add( "booleanexpression", new ParsingRule( "not? boolean_atomic booleanexpression_more*", "bool" ) );// booleanext*
-				rules.Add( "booleanexpression_more", new ParsingRule( "boolean_joiners not? boolean_atomic" ) );// booleanext*
-				rules.Add( "boolean_atomic", new ParsingRule( "boolean_string_comparison | boolean_float_comparison | compoundbooleanexpression | IDENTIFIER.bool | TRUE | FALSE" ) );
+				rules.Add( "compound_boolean_expression", new ParsingRule( "BRACKET_OPEN boolean_expression BRACKET_CLOSE" ) );
+				rules.Add( "boolean_expression", new ParsingRule( "not? boolean_atomic boolean_expression_more*", "bool" ) );// booleanext*
+				rules.Add( "boolean_expression_more", new ParsingRule( "boolean_joiners not? boolean_atomic" ) );// booleanext*
+				rules.Add( "boolean_atomic", new ParsingRule( "boolean_string_comparison | boolean_float_comparison | compound_boolean_expression | IDENTIFIER.bool | TRUE | FALSE" ) );
 				rules.Add( "boolean_joiners", ParsingRule.CreateWildCardBlock( "AND | OR" ) );
 
 				rules.Add( "boolean_string_comparison", new ParsingRule( "string_or_id string_comparison_operators string_or_id" ) );
 				rules.Add( "boolean_float_comparison", new ParsingRule( "float_or_id float_comparison_operators float_or_id" ) );
 
-				rules.Add( "float_or_id", new ParsingRule( "FLOAT | functioncall.float | IDENTIFIER.float", "float" ) );//float_arithmatic_expression
-				rules.Add( "string_or_id", new ParsingRule( "STRING | functioncall.string | IDENTIFIER.string", "string" ) );
+				rules.Add( "float_or_id", new ParsingRule( "FLOAT | function_call.float | IDENTIFIER.float", "float" ) );//float_arithmatic_expression
+				rules.Add( "string_or_id", new ParsingRule( "STRING | function_call.string | IDENTIFIER.string", "string" ) );
 
-				rules.Add( "float_comparison_operators", ParsingRule.CreateWildCardBlock( "NOTEQUAL | EQUITY | LESSTHAN | GREATERTHAN | GREATERTHANOREQUAL | LESSTHANOREQUAL" ) );
-				rules.Add( "string_comparison_operators", new ParsingRule( "NOTEQUAL | EQUITY" ) );
+				rules.Add( "float_comparison_operators", ParsingRule.CreateWildCardBlock( "NOT_EQUAL | EQUALITY | LESS_THAN | GREATER_THAN | GREATER_THAN_OR_EQUAL | LESS_THAN_OR_EQUAL" ) );
+				rules.Add( "string_comparison_operators", new ParsingRule( "NOT_EQUAL | EQUALITY" ) );
 
-				rules.Add( "compound_float_arithmatic_expression", new ParsingRule( "OPENBRACKET float_arithmatic_expression CLOSEBRACKET" ) );
+				rules.Add( "compound_float_arithmatic_expression", new ParsingRule( "BRACKET_OPEN float_arithmatic_expression BRACKET_CLOSE" ) );
 				rules.Add( "float_arithmatic_expression", new ParsingRule( "float_arithmatic_atomic float_arithmatic_expression_more*", "float" ) );
 				rules.Add( "float_arithmatic_expression_more", new ParsingRule( "float_arithmatic_joiners float_arithmatic_atomic" ) );
-				rules.Add( "float_arithmatic_atomic", new ParsingRule( "compound_float_arithmatic_expression | decrementexpression | incrementexpression | IDENTIFIER.float | FLOAT" ) );
+				rules.Add( "float_arithmatic_atomic", new ParsingRule( "compound_float_arithmatic_expression | decrement_expression | increment_expression | IDENTIFIER.float | FLOAT" ) );
 				rules.Add( "float_arithmatic_joiners", new ParsingRule( "PLUS | MINUS | DIVIDE | TIMES | MOD" ) );
 
-				rules.Add( "incrementexpression", new ParsingRule( "IDENTIFIER.float INCREMENT | INCREMENT IDENTIFIER.float" ) );
-				rules.Add( "decrementexpression", new ParsingRule( "IDENTIFIER.float DECREMENT | DECREMENT IDENTIFIER.float" ) );
+				rules.Add( "increment_expression", new ParsingRule( "IDENTIFIER.float INCREMENT | INCREMENT IDENTIFIER.float" ) );
+				rules.Add( "decrement_expression", new ParsingRule( "IDENTIFIER.float DECREMENT | DECREMENT IDENTIFIER.float" ) );
 
 				// Added because tokens cannot be made optional or repeatable.
 				rules.Add( "not", new ParsingRule( "NOT", "bool" ) );

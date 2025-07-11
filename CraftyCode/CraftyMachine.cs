@@ -11,8 +11,6 @@ namespace CraftyCode
 	/// </summary>
 	public class CraftyMachine
 	{
-		List<CraftyContext> contexts = new List<CraftyContext>( );
-
 		public CraftyMachine ( params Operation[] ops )
 		{
 			operationsList = new List<Operation>( );

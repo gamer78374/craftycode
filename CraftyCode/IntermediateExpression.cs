@@ -21,13 +21,13 @@ namespace CraftyCode
 		List<string> legalOperands = new List<string>( );
 
 		public IntermediateExpression ( params Operator[] list )
-			: this( "OPENBRACKET", "CLOSEBRACKET", list )
+			: this( "BRACKET_OPEN", "BRACKET_CLOSE", list )
 		{
 
 		}
 
 		public IntermediateExpression ( IntermediateExpression mixer, params Operator[] list )
-			: this( "OPENBRACKET", "CLOSEBRACKET", mixer, list )
+			: this( "BRACKET_OPEN", "BRACKET_CLOSE", mixer, list )
 		{
 
 		}

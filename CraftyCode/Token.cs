@@ -33,7 +33,7 @@ namespace CraftyCode
 				if ( Token.IsValidVariableType( StringValue ) != null )
 				{
 					IsTypeIdentifier = true;
-					Name = "TYPEIDENTIFIER";
+					Name = "TYPE_IDENTIFIER";
 					StringValue = Token.IsValidVariableType( StringValue );
 				}
 				if ( !IsTypeIdentifier )

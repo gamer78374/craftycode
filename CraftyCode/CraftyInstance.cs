@@ -269,76 +269,7 @@ namespace CraftyCode
 		{
 			static TokenCollection ( )
 			{
-				/*
-				TokenCollection.AddToken( new Token( "NEWLINE", @"\r\n", TokenOptions.DontEmitToken ) );
-				TokenCollection.AddToken( new Token( "NEWLINE", @"\n", TokenOptions.DontEmitToken ) );
-				TokenCollection.AddToken( new Token( "WHITESPACE", @" \t", TokenOptions.DontEmitToken ) );
-				TokenCollection.AddToken( new Token( "if" ) );
-				TokenCollection.AddToken( new Token( "else" ) );
-				TokenCollection.AddToken( new Token( "while" ) );
-				TokenCollection.AddToken( new Token( "do" ) );
-				TokenCollection.AddToken( new Token( "foreach" ) );
-				TokenCollection.AddToken( new Token( "for" ) );
-				TokenCollection.AddToken( new Token( "increment", "++" ) );
-				TokenCollection.AddToken( new Token( "decrement", "--" ) );
-				TokenCollection.AddToken( new Token( "NOTEQUAL", "!=" ) );
-				TokenCollection.AddToken( new Token( "EQUITY", "==" ) );
-				TokenCollection.AddToken( new Token( "LESSTHANOREQUAL", "<=" ) );
-				TokenCollection.AddToken( new Token( "GREATERTHANOREQUAL", ">=" ) );
-				TokenCollection.AddToken( new Token( "LESSTHAN", "<" ) );
-				TokenCollection.AddToken( new Token( "GREATERTHAN", ">" ) );
-				TokenCollection.AddToken( new Token( "ASSIGN", "=" ) );
-				TokenCollection.AddToken( new Token( "NOT", "!" ) );
-				TokenCollection.AddToken( new Token( "LINECOMMENT", "//", TokenOptions.DontEmitToken ) );
-				TokenCollection.AddToken( new Token( "TIMES", "*" ) );
-				TokenCollection.AddToken( new Token( "PLUS", "+" ) );
-				TokenCollection.AddToken( new Token( "DIVIDE", "/" ) );
-				TokenCollection.AddToken( new Token( "MINUS", "-" ) );
-
-				TokenCollection.AddToken( new Token( "CURLYOPEN", "{" ) );
-				TokenCollection.AddToken( new Token( "CURLYCLOSE", "}" ) );
-				TokenCollection.AddToken( new Token( "OPENBRACKET", "(" ) );
-				TokenCollection.AddToken( new Token( "CLOSEBRACKET", ")" ) );
-
-				TokenCollection.AddToken( new Token( "\"" ) );
-				TokenCollection.AddToken( new Token( "'" ) );
-
-				TokenCollection.AddToken( new Token( "FLOAT", "[0-9]+(.[0-9]+)?", TokenOptions.DontEscapePattern | TokenOptions.EmitMatch ) );
-				*/
-				/*
-				patterns.Add( @"\r\n", "NEWLINE" );
-				patterns.Add( @"\n", "NEWLINE" );
-				patterns.Add( @"[ \t]", "WHITESPACE" );
-				//patterns.Add( "[\r\n]", "WHITESPACE" );
-				patterns.Add( "if", "IF" );
-				patterns.Add( "else", "ELSE" );
-				patterns.Add( "while", "WHILE" );
-				patterns.Add( "do", "DO" );
-				patterns.Add( "for", "FOR" );
-				patterns.Add( "foreach", "FOREACH" );
-				patterns.Add( @"\+\+", "INCREMENT" );
-				patterns.Add( @"\-\-", "DECREMENT" );
-				patterns.Add( "!=", "NOTEQUAL" );
-				patterns.Add( "==", "EQUITY" );
-				patterns.Add( "<=", "LESSTHANOREQUAL" );
-				patterns.Add( ">=", "GREATERTHANOREQUAL" );
-				patterns.Add( "<", "LESSTHAN" );
-				patterns.Add( ">", "GREATERTHAN" );
-				patterns.Add( "=", "ASSIGN" );
-				patterns.Add( "!", "NOT" );
-				patterns.Add( "//", "LINECOMMENT" );
-				patterns.Add( @"\+", "PLUS" );
-				patterns.Add( @"\-", "MINUS" );
-				patterns.Add( @"\/", "DIVIDE" );
-				patterns.Add( @"\*", "TIMES" );
-				patterns.Add( @"\{", "CURLYOPEN" );
-				patterns.Add( @"\}", "CURLYCLOSE" );
-				patterns.Add( @"\(", "OPENBRACKET" );
-				patterns.Add( @"\)", "CLOSEBRACKET" );
-				patterns.Add( "\"", "\"" );
-				patterns.Add( "'", "\'" );
-				patterns.Add( @"[0-9]+(\.[0-9]+)?", "FLOAT" );
-				 * */
+				
 			}
 
 			static List<Token> tokens = new List<Token>( );
@@ -369,17 +300,17 @@ namespace CraftyCode
 			Console.Write( "Performating lexicon operation... " );
 			//StringBuilder sb = new StringBuilder( );
 			List<Token> tokens = new List<Token>( );
-			tokens.Add( new Token( "ENDSTATEMENT", 0, 0 ) );
+			tokens.Add( new Token( "END_STATEMENT", 0, 0 ) );
 			Dictionary<string, string> patterns = new Dictionary<string, string>( );
 			validTokens = new List<string>( );
-			patterns.Add( @"\r\n", "NEWLINE" );
-			patterns.Add( @"\n", "NEWLINE" );
+			patterns.Add( @"\r\n", "NEW_LINE" );
+			patterns.Add( @"\n", "NEW_LINE" );
 			patterns.Add( @"[ \t]", "WHITESPACE" );
 			patterns.Add( @"\-?[a-z][a-z0-9]*", "IDENTIFIER" );
 			patterns.Add( @"\-?[0-9]+(\.[0-9]+)?", "FLOAT" );
-			patterns.Add( @"\(", "OPENBRACKET" );
-			patterns.Add( @"\)", "CLOSEBRACKET" );
-			patterns.Add( @"\/\*", "LONGCOMMENT" );
+			patterns.Add( @"\(", "BRACKET_OPEN" );
+			patterns.Add( @"\)", "BRACKET_CLOSE" );
+			patterns.Add( @"\/\*", "LONG_COMMENT" );
 			patterns.Add( "and", "AND" );
 			patterns.Add( "or", "OR" );
 			patterns.Add( "&&", "AND" );
@@ -401,47 +332,47 @@ namespace CraftyCode
 			patterns.Add( "do", "DO" );
 			patterns.Add( "foreach", "FOREACH" );
 			patterns.Add( "for", "FOR" );
-			patterns.Add( @"\+?infinity", "POSITIVEINFINITY" );
-			patterns.Add( @"\-infinity", "NEGATIVEINFINITY" );
+			patterns.Add( @"\+?infinity", "POSITIVE_INFINITY" );
+			patterns.Add( @"\-infinity", "NEGATIVE_INFINITY" );
 			patterns.Add( "∞", "POSITIVEINFINITY" );
-			patterns.Add( Regex.Escape( "-∞" ), "NEGATIVEINFINITY" );
-			patterns.Add( Regex.Escape( "+∞" ), "POSITIVEINFINITY" );
+			patterns.Add( Regex.Escape( "-∞" ), "NEGATIVE_INFINITY" );
+			patterns.Add( Regex.Escape( "+∞" ), "POSITIVE_INFINITY" );
 			patterns.Add( "NaN", "NAN" );
 
 			patterns.Add( @"\+\+", "INCREMENT" );
 			patterns.Add( @"\-\-", "DECREMENT" );
-			patterns.Add( Regex.Escape( @"->" ), "POINTRIGHT" );
-			patterns.Add( "!=", "NOTEQUAL" );
-			patterns.Add( "==", "EQUITY" );
-			patterns.Add( "<=", "LESSTHANOREQUAL" );
-			patterns.Add( ">=", "GREATERTHANOREQUAL" );
-			patterns.Add( "<", "LESSTHAN" );
-			patterns.Add( ">", "GREATERTHAN" );
+			patterns.Add( Regex.Escape( @"->" ), "POINT_RIGHT" );
+			patterns.Add( "!=", "NOT_EQUAL" );
+			patterns.Add( "==", "EQUALITY" );
+			patterns.Add( "<=", "LESS_THAN_OR_EQUAL" );
+			patterns.Add( ">=", "GREATER_THAN_OR_EQUAL" );
+			patterns.Add( "<", "LESS_THAN" );
+			patterns.Add( ">", "GREATER_THAN" );
 			patterns.Add( "=", "ASSIGN" );
 			patterns.Add( ",", "COMMA" );
 			patterns.Add( "!", "NOT" );
 			patterns.Add( Regex.Escape( "&" ), "AMPERSAND" );
 			patterns.Add( Regex.Escape( "^" ), "CARET" );
-			patterns.Add( "//", "LINECOMMENT" );
-			patterns.Add( @"\+=", "PLUSEQUAL" );
-			patterns.Add( @"\-=", "MINUSEQUAL" );
-			patterns.Add( @"\/=", "DIVIDEEQUAL" );
-			patterns.Add( @"\*=", "TIMESEQUAL" );
-			patterns.Add( @"%=", "MODEQUAL" );
+			patterns.Add( "//", "LINE_COMMENT" );
+			patterns.Add( @"\+=", "PLUS_EQUAL" );
+			patterns.Add( @"\-=", "MINUS_EQUAL" );
+			patterns.Add( @"\/=", "DIVIDE_EQUAL" );
+			patterns.Add( @"\*=", "TIMES_EQUAL" );
+			patterns.Add( @"%=", "MOD_EQUAL" );
 			patterns.Add( @"\+", "PLUS" );
 			patterns.Add( @"\-", "MINUS" );
 			patterns.Add( @"\/", "DIVIDE" );
 			patterns.Add( @"\*", "TIMES" );
 			patterns.Add( @"%", "MOD" );
-			patterns.Add( @"\{", "CURLYOPEN" );
-			patterns.Add( @"\}", "CURLYCLOSE" );
+			patterns.Add( @"\{", "CURLY_OPEN" );
+			patterns.Add( @"\}", "CURLY_CLOSE" );
 
 			patterns.Add( "\"", "\"" );
 			patterns.Add( "'", "\'" );
 
 			//patterns.Add( @"[0-9]+[^\.]", "INTEGER" );
 			//patterns.Add( @"\$[a-z][a-z0-9]*", "VID" );
-			patterns.Add( ";", "ENDSTATEMENT" );
+			patterns.Add( ";", "END_STATEMENT" );
 			patterns.Add( "*", "ILLEGAL" );
 
 			//patterns.
@@ -452,7 +383,7 @@ namespace CraftyCode
 			}
 
 			validTokens.Add( "STRING" );
-			validTokens.Add( "TYPEIDENTIFIER" );
+			validTokens.Add( "TYPE_IDENTIFIER" );
 			
 			Dictionary<int, int> tokenOnLine = new Dictionary<int, int>( );
 
@@ -537,18 +468,18 @@ namespace CraftyCode
 							//tokens.Add( "STRING" + kvp.Value );
 							//sb.Append( tryString + "" );
 						}
-						else if ( kvp.Value == "LINECOMMENT" )
+						else if ( kvp.Value == "LINE_COMMENT" )
 						{
 							//lineNumber++;
 						}
-						else if ( kvp.Value == "WHITESPACE" || kvp.Value == "NEWLINE" )
+						else if ( kvp.Value == "WHITESPACE" || kvp.Value == "NEW_LINE" )
 						{
-							if ( kvp.Value == "NEWLINE" )
+							if ( kvp.Value == "NEW_LINE" )
 							{
 								lineNumber++;
 							}
 						}
-						else if ( kvp.Value == "LONGCOMMENT" )
+						else if ( kvp.Value == "LONG_COMMENT" )
 						{
 							commentLevel++;
 						}
@@ -565,7 +496,7 @@ namespace CraftyCode
 						start += tryString.Length;
 						length = 0;
 						current = start;
-						if ( kvp.Value == "LONGCOMMENT" )
+						if ( kvp.Value == "LONG_COMMENT" )
 						{
 							while ( commentLevel > 0 )
 							{
@@ -601,7 +532,7 @@ namespace CraftyCode
 							start++;
 							//sb.Append( kvp.Value + "" );
 						}
-						else if ( kvp.Value == "LINECOMMENT" )
+						else if ( kvp.Value == "LINE_COMMENT" )
 						{
 							while ( !Regex.IsMatch( input.Substring( current, 1 ), "[\r\n]" ) )
 							{

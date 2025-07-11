@@ -121,7 +121,7 @@ namespace CraftyCode
 
 		public bool IsIsolated
 		{
-			get { return IsRuleBranch && BranchRule.Name == "functiondeclare"; }
+			get { return IsRuleBranch && BranchRule.Name == "function_declare"; }
 		}
 
 		protected IDictionary<string, Symbol> SymbolList
@@ -415,7 +415,7 @@ namespace CraftyCode
 			{
 				totalArguments = 0;
 				// If it's a function declaration... process.
-				if ( branches[i].IsRuleBranch && branches[i].BranchRule.Name == "functiondeclare" )
+				if ( branches[i].IsRuleBranch && branches[i].BranchRule.Name == "function_declare" )
 				{
 					declareBranch = branches[i];
 					//sb = new StringBuilder( );
@@ -455,7 +455,7 @@ namespace CraftyCode
 
 						// At this point, if there's anything but a type identifier, we should break. Though this should never return true.
 						if (// declareBranch.branches[3].branches[x].BranchToken.Name != "IDENTIFIER" &&
-							declareBranch.branches[3].branches[x].BranchToken.Name != "TYPEIDENTIFIER" )
+							declareBranch.branches[3].branches[x].BranchToken.Name != "TYPE_IDENTIFIER" )
 						{
 							break;
 						}
@@ -525,18 +525,18 @@ namespace CraftyCode
 						skipNext = true;
 					}
 
-					if ( thisTreeBranch.BranchToken.Name == "COMMA" || thisTreeBranch.BranchToken.Name == "OPENBRACKET" )
+					if ( thisTreeBranch.BranchToken.Name == "COMMA" || thisTreeBranch.BranchToken.Name == "BRACKET_OPEN" )
 					{
 						continue;
 					}
 
-					if ( thisTreeBranch.BranchToken.Name == "CLOSEBRACKET" )
+					if ( thisTreeBranch.BranchToken.Name == "BRACKET_CLOSE" )
 					{
 						break;
 					}
 				}
 
-				if ( thisTreeBranch.IsTokenBranch && thisTreeBranch.BranchToken.Name == "TYPEIDENTIFIER" )
+				if ( thisTreeBranch.IsTokenBranch && thisTreeBranch.BranchToken.Name == "TYPE_IDENTIFIER" )
 				{
 					returnType = thisTreeBranch.BranchToken.StringValue;
 				}
@@ -562,13 +562,13 @@ namespace CraftyCode
 				{
 					continue;
 				} // If we find a close bracket token, we've obviously reached the end of the list.
-				else if ( treeBranch.branches[x].BranchToken.Name == "CLOSEBRACKET" )
+				else if ( treeBranch.branches[x].BranchToken.Name == "BRACKET_CLOSE" )
 				{
 					break;
 				}
 
 				// At this point, if there's anything but a type identifier, we should break. Though this should never return true.
-				if ( treeBranch.branches[x].BranchToken.Name != "TYPEIDENTIFIER" )
+				if ( treeBranch.branches[x].BranchToken.Name != "TYPE_IDENTIFIER" )
 				{
 					break;
 				}
@@ -586,16 +586,16 @@ namespace CraftyCode
 		{
 			if ( branch.IsRuleBranch )
 			{
-				if ( branch.BranchRule.Name == "functioncall" )
+				if ( branch.BranchRule.Name == "function_call" )
 				{
 					return GenerateFunctionSignature( branch.branches[0].BranchToken.StringValue, GetFunctionArgumentTypes( branch ) );
 				}
-				else if ( branch.BranchRule.Name == "functiondeclare" )
+				else if ( branch.BranchRule.Name == "function_declare" )
 				{
 					return GenerateFunctionSignature( branch.branches[1].BranchToken.StringValue, GetFunctionArgumentTypes( branch, 3 ) );
 				}
 			}
-			throw new ArgumentException( "Branch must be a functioncall or functiondeclare." );
+			throw new ArgumentException( "Branch must be a function_call or function_declare." );
 		}
 
 		protected string GenerateFunctionSignature ( string name, params string[] argTypes )
@@ -624,7 +624,7 @@ namespace CraftyCode
 
 				for ( int i = 0; i < branches.Count; i++ )
 				{
-					if ( branches[i].IsRuleBranch && ( branches[i].BranchRule.Name == "statementlist" || branches[i].BranchRule.Name == "functionbody" ) )
+					if ( branches[i].IsRuleBranch && ( branches[i].BranchRule.Name == "statement_list" || branches[i].BranchRule.Name == "function_body" ) )
 					{
 						branches[i].GenerateSymbolTable( );
 					}
@@ -641,7 +641,7 @@ namespace CraftyCode
 					{
 						if ( branches[i].IsTokenBranch )
 						{
-							if ( branches[i].BranchToken.Name == "TYPEIDENTIFIER" )
+							if ( branches[i].BranchToken.Name == "TYPE_IDENTIFIER" )
 							{
 								currentTypeToken = branches[i].BranchToken;
 							}
@@ -670,7 +670,7 @@ namespace CraftyCode
 				return;
 			}
 
-			if ( IsRuleBranch && BranchRule.Name == "functioncall" )
+			if ( IsRuleBranch && BranchRule.Name == "function_call" )
 			{
 				List<string> argTypes = new List<string>( );
 
@@ -732,7 +732,7 @@ namespace CraftyCode
 
 					currentIDToken = b.BranchToken;
 					currentIDToken = b.BranchToken;
-					if ( currentIDToken.Name == "IDENTIFIER" && !( branchNumber == 0 && b.ParentBranch.IsRuleBranch && b.ParentBranch.BranchRule.Name == "functioncall" ) )
+					if ( currentIDToken.Name == "IDENTIFIER" && !( branchNumber == 0 && b.ParentBranch.IsRuleBranch && b.ParentBranch.BranchRule.Name == "function_call" ) )
 					{
 						currentIDToken = b.BranchToken;
 						// Check if the symbol has already been declared.
@@ -765,7 +765,7 @@ namespace CraftyCode
 							 * */
 						}
 						/*
-						if ( b.BranchRule.Name == "functiondeclare" )
+						if ( b.BranchRule.Name == "function_declare" )
 						{
 							SymbolList.Add( currentIDToken.StringValue, new Symbol( currentIDToken.StringValue, currentTypeToken.StringValue ) );
 						}
@@ -860,7 +860,7 @@ namespace CraftyCode
 				}
 				else
 				{
-					if ( b.BranchRule.Name == "variable_declaration_statement" || b.BranchRule.Name == "functiondeclare" )
+					if ( b.BranchRule.Name == "variable_declaration_statement" || b.BranchRule.Name == "function_declare" )
 					{
 						currentTypeToken = b.GetBranchAt( 0 ).BranchToken;
 						currentIDToken = b.GetBranchAt( 1 ).BranchToken;
@@ -882,7 +882,7 @@ namespace CraftyCode
 							else
 							{
 
-								if ( b.BranchRule.Name == "functiondeclare" )
+								if ( b.BranchRule.Name == "function_declare" )
 								{
 									symbolList.Add( currentIDToken.StringValue, new Symbol( currentIDToken.StringValue, currentTypeToken.StringValue ) );
 								}
@@ -996,7 +996,7 @@ namespace CraftyCode
 			//Debug.Print( "".PadRight( Level * 4, ' ' ) + "New tree for {0}.", ( IsRuleBranch ? "branch rule " + BranchRule.Name : "branch token " + BranchToken.Name ) );
 			if ( IsRuleBranch )
 			{
-				if ( BranchRule.Name == "functioncall" )
+				if ( BranchRule.Name == "function_call" )
 				{
 					string functionCallReturnType = GetSymbol( GenerateFunctionSignature( this.Branches[0].BranchToken.StringValue, GetFunctionArgumentTypes( this, 2 ) ) ).FunctionReturnType;
 					return functionCallReturnType;
@@ -1124,26 +1124,26 @@ namespace CraftyCode
 					{
 						TreeBranch branch = null;
 						/*
-						if ( optionSteps[stepNumber].Value == "ifrootstatement" )
+						if ( optionSteps[stepNumber].Value == "if_root_statement" )
 						{
 							branch = new IfRootBranch( ParentParser, this, ParentParser.GetRuleAt( optionSteps[stepNumber].Value ), currentOptionNumber, stepNumber, StartToken + tokenOffset, Level );
 						}
-						else if ( optionSteps[stepNumber].Value == "ifstatement" ||
-									optionSteps[stepNumber].Value == "elseifstatement" ||
-									optionSteps[stepNumber].Value == "elsestatement"
+						else if ( optionSteps[stepNumber].Value == "if_statement" ||
+									optionSteps[stepNumber].Value == "elseif_statement" ||
+									optionSteps[stepNumber].Value == "else_statement"
 							)
 						{
 							branch = new IfBranch( ParentParser, this, ParentParser.GetRuleAt( optionSteps[stepNumber].Value ), currentOptionNumber, stepNumber, StartToken + tokenOffset, Level );
-							if ( optionSteps[stepNumber].Value == "elsestatement" )
+							if ( optionSteps[stepNumber].Value == "else_statement" )
 							{
 								( (IfBranch) branch ).IsElse = true;
 							}
 						}
-						else if ( optionSteps[stepNumber].Value == "booleanexpression" )
+						else if ( optionSteps[stepNumber].Value == "boolean_expression" )
 						{
 							branch = new BooleanExpressionBranch( ParentParser, this, ParentParser.GetRuleAt( optionSteps[stepNumber].Value ), currentOptionNumber, stepNumber, StartToken + tokenOffset, Level );
 						}
-						else if ( optionSteps[stepNumber].Value == "booleanexpression" )
+						else if ( optionSteps[stepNumber].Value == "boolean_expression" )
 						{ 
 							
 						}
@@ -1409,14 +1409,14 @@ namespace CraftyCode
 
 		protected IEnumerable<Operation> GetOperations ( )
 		{
-			if ( IsRuleBranch && ( BranchRule.Name == "functionbody" || BranchRule.Name == "statementlist" || BranchRule.Name == "statement" ) )
+			if ( IsRuleBranch && ( BranchRule.Name == "function_body" || BranchRule.Name == "statement_list" || BranchRule.Name == "statement" ) )
 			{
-				if ( BranchRule.Name == "statementlist" )
+				if ( BranchRule.Name == "statement_list" )
 				{
 					ops.AddFirst( new Operation( OpCode.Dummy, "(Statement List)" ) );
 				}
 
-				if ( BranchRule.Name == "functionbody" )
+				if ( BranchRule.Name == "function_body" )
 				{
 					ops.AddFirst( new Operation( OpCode.Dummy, "(Function Body)" ) );
 				}
@@ -1441,7 +1441,7 @@ namespace CraftyCode
 				ReplaceBranchWithChildren( Branches[0] );// replace assignoperators with ASSIGN
 				TreeBranch identifierBranch = null;
 				bool validAssign = false;
-				if ( ParentBranch.BranchRule.Name == "assignstatement" )
+				if ( ParentBranch.BranchRule.Name == "assign_statement" )
 				{
 					identifierBranch = ParentBranch.branches[0];
 				}
@@ -1452,7 +1452,7 @@ namespace CraftyCode
 				}
 				else
 				{
-					throw new InternalCraftyException( string.Format( "Parent branch is {0}. Must be assignmentstatement or variable_declaration_statement.", ParentBranch.BranchRule.Name ) );
+					throw new InternalCraftyException( string.Format( "Parent branch is {0}. Must be assignment_statement or variable_declaration_statement.", ParentBranch.BranchRule.Name ) );
 				}
 
 				LinkedList<Operation> addAfter = new LinkedList<Operation>( );
@@ -1462,7 +1462,7 @@ namespace CraftyCode
 					{
 						validAssign = true;
 					}
-					else if ( branches[0].BranchToken.Name == "PLUSEQUAL" )
+					else if ( branches[0].BranchToken.Name == "PLUS_EQUAL" )
 					{
 						//( identifierBranch.BranchToken.ReturnType == "float" || identifierBranch.BranchToken.ReturnType == "string" )
 						if ( identifierBranch.BranchToken.ReturnType == "float" )
@@ -1481,7 +1481,7 @@ namespace CraftyCode
 							addAfter.AddFirst( new Operation( OpCode.PushSymbol, identifierBranch.BranchToken.IdentifierSymbol ) );
 						}
 					}
-					else if ( branches[0].BranchToken.Name == "MINUSEQUAL" )
+					else if ( branches[0].BranchToken.Name == "MINUS_EQUAL" )
 					{
 						if ( identifierBranch.BranchToken.ReturnType == "float" )
 						{
@@ -1490,7 +1490,7 @@ namespace CraftyCode
 							validAssign = true;
 						}
 					}
-					else if ( branches[0].BranchToken.Name == "TIMESEQUAL" )
+					else if ( branches[0].BranchToken.Name == "TIMES_EQUAL" )
 					{
 						if ( identifierBranch.BranchToken.ReturnType == "float" )
 						{
@@ -1499,7 +1499,7 @@ namespace CraftyCode
 							validAssign = true;
 						}
 					}
-					else if ( branches[0].BranchToken.Name == "DIVIDEEQUAL" )
+					else if ( branches[0].BranchToken.Name == "DIVIDE_EQUAL" )
 					{
 						if ( identifierBranch.BranchToken.ReturnType == "float" )
 						{
@@ -1532,10 +1532,10 @@ namespace CraftyCode
 					ops.AddLast( oo );
 				}
 			}
-			else if ( IsRuleBranch && BranchRule.Name == "assignstatement" )
+			else if ( IsRuleBranch && BranchRule.Name == "assign_statement" )
 			{
 				/*
-				assignstatement
+				assign_statement
 					IDENTIFIER
 					assign
 						assignoperators
@@ -1550,7 +1550,7 @@ namespace CraftyCode
 											DIVIDE
 										float_arithmatic_atomic
 											FLOAT
-				ENDSTATEMENT
+				END STATEMENT
 				*/
 				Symbol symbol = Branches[0].BranchToken.IdentifierSymbol;
 				foreach ( Operation o in branches[1].GetOperations( ) )
@@ -1561,7 +1561,7 @@ namespace CraftyCode
 				ops.AddLast( new Operation( OpCode.Store, symbol ) );
 				ops.AddLast( new Operation( OpCode.Discard ) );
 			}
-			else if ( IsRuleBranch && BranchRule.Name == "booleanexpression" )
+			else if ( IsRuleBranch && BranchRule.Name == "boolean_expression" )
 			{
 				Debug.Print( "Flattening boolean expression." );
 
@@ -1577,9 +1577,9 @@ namespace CraftyCode
 					new Operator( "AND", 3, OpCode.LogicalAnd ), new Operator( "OR", 3, OpCode.LogicalOr ),
 					new Operator( "TRUE", true ), new Operator( "FALSE", true ), new Operator( "IDENTIFIER", true ),
 					new Operator( "FLOAT", true ), new Operator( "NOT", 10, OpCode.NegateBoolean ),
-					new Operator( "LESSTHAN", 9, OpCode.FloatLessThan ), new Operator( "GREATERTHAN", 9, OpCode.FloatGreaterThan ),
-					new Operator( "NOTEQUAL", 9, OpCode.FloatNotEqualTo ), new Operator( "EQUITY", 9, OpCode.FloatEqualTo ),
-					new Operator( "LESSTHANOREQUAL", 9, OpCode.FloatLessOrEqualTo ), new Operator( "GREATERTHANOREQUAL", 9, OpCode.FloatGreaterOrEqualTo ),
+					new Operator( "LESS_THAN", 9, OpCode.FloatLessThan ), new Operator( "GREATER_THAN", 9, OpCode.FloatGreaterThan ),
+					new Operator( "NOT_EQUAL", 9, OpCode.FloatNotEqualTo ), new Operator( "EQUALITY", 9, OpCode.FloatEqualTo ),
+					new Operator( "LESS_THAN_OR_EQUAL", 9, OpCode.FloatLessOrEqualTo ), new Operator( "GREATER_THAN_OR_EQUAL", 9, OpCode.FloatGreaterOrEqualTo ),
 					new Operator( "MOD", 105, OpCode.Modulus ), new Operator( "TIMES", 105, OpCode.Multiply ), new Operator( "DIVIDE", 105, OpCode.Divide ),
 					new Operator( "PLUS", 103, OpCode.Add ), new Operator( "MINUS", 103, OpCode.Subtract ) );
 
@@ -1590,7 +1590,7 @@ namespace CraftyCode
 					ops.AddLast( o );
 				}
 			}
-			else if ( IsRuleBranch && ( BranchRule.Name == "incrementexpression" || BranchRule.Name == "decrementexpression" ) )
+			else if ( IsRuleBranch && ( BranchRule.Name == "increment_expression" || BranchRule.Name == "decrement_expression" ) )
 			{
 				if ( branches[0].IsTokenBranch && branches[0].BranchToken.Name == "INCREMENT" )
 				{
@@ -1681,11 +1681,11 @@ namespace CraftyCode
 					ops.AddLast( new Operation( OpCode.Discard ) );
 				}
 			}
-			else if ( IsRuleBranch && BranchRule.Name == "solidblock" )
+			else if ( IsRuleBranch && BranchRule.Name == "solid_block" )
 			{
 				for ( int i = 0; i < branches.Count; i++ )
 				{
-					if ( branches[i].IsRuleBranch && branches[i].BranchRule.Name == "statementlist" )
+					if ( branches[i].IsRuleBranch && branches[i].BranchRule.Name == "statement_list" )
 					{
 						foreach ( Operation o in branches[i].GetOperations( ) )
 						{
@@ -1696,7 +1696,7 @@ namespace CraftyCode
 				ops.AddFirst( new Operation( OpCode.StartSolidBlock ) );
 				ops.AddLast( new Operation( OpCode.EndSolidBlock ) );
 			}
-			else if ( IsRuleBranch && BranchRule.Name == "forstatement" )
+			else if ( IsRuleBranch && BranchRule.Name == "for_statement" )
 			{
 				TreeBranch tb = null;
 				int step = 0;
@@ -1711,26 +1711,26 @@ namespace CraftyCode
 
 					if ( step == 0 )
 					{
-						if ( tb.IsRuleBranch && ( tb.BranchRule.Name == "assignstatement" || tb.BranchRule.Name == "variable_declaration_statement" ) )
+						if ( tb.IsRuleBranch && ( tb.BranchRule.Name == "assignment_statement" || tb.BranchRule.Name == "variable_declaration_statement" ) )
 						{
 							foreach ( Operation o in tb.GetOperations( ) )
 							{
 								ops.AddLast( o );
 							}
 						}
-						else if ( tb.IsTokenBranch && tb.BranchToken.Name == "ENDSTATEMENT" )
+						else if ( tb.IsTokenBranch && tb.BranchToken.Name == "END_STATEMENT" )
 						{
 							step++;
 
 							ops.AddLast( new Operation( OpCode.NoOperation, "for boolean expression" ) );
-							SetNamedOpcode( "forstart", ops.Last.Value );
+							SetNamedOpcode( "for_start", ops.Last.Value );
 							ops.AddLast( new Operation( OpCode.NoOperation, "for loop end" ) );
-							SetNamedOpcode( "endofthisif", ops.Last.Value );
+							SetNamedOpcode( "end_of_this_if", ops.Last.Value );
 						}
 					}
 					else if ( step == 1 )
 					{
-						if ( tb.IsRuleBranch && tb.BranchRule.Name == "booleanexpression" )
+						if ( tb.IsRuleBranch && tb.BranchRule.Name == "boolean_expression" )
 						{
 							foreach ( Operation o in tb.GetOperations( ) )
 							{
@@ -1739,14 +1739,14 @@ namespace CraftyCode
 							}
 							ops.AddBefore( ops.Last, new Operation( OpCode.JumpIfFalse, ops.Last.Value ) ); // elseOp.Value
 						}
-						else if ( tb.IsTokenBranch && tb.BranchToken.Name == "ENDSTATEMENT" )
+						else if ( tb.IsTokenBranch && tb.BranchToken.Name == "END_STATEMENT" )
 						{
 							step++;
 						}
 					}
 					else if ( step == 2 )
 					{
-						if ( tb.IsRuleBranch && tb.BranchRule.Name == "forstatement_third" )
+						if ( tb.IsRuleBranch && tb.BranchRule.Name == "for_statement_third" )
 						{
 							foreach ( Operation o in tb.GetOperations( ) )
 							{
@@ -1762,14 +1762,14 @@ namespace CraftyCode
 							}
 							step++;
 						}
-						else if ( tb.IsTokenBranch && tb.BranchToken.Name == "CLOSEBRACKET" )
+						else if ( tb.IsTokenBranch && tb.BranchToken.Name == "BRACKET_CLOSE" )
 						{
 							step++;
 						}
 					}
 					else if ( step == 3 )
 					{
-						if ( tb.IsRuleBranch && tb.BranchRule.Name == "statementlist" )
+						if ( tb.IsRuleBranch && tb.BranchRule.Name == "statement_list" )
 						{
 							foreach ( Operation o in tb.GetOperations( ) )
 							{
@@ -1781,7 +1781,7 @@ namespace CraftyCode
 								ops.AddBefore( ops.Last, op );
 							}
 
-							ops.AddBefore( ops.Last, new Operation( OpCode.Jump, GetNamedOpcode( "forstart" ) ) );
+							ops.AddBefore( ops.Last, new Operation( OpCode.Jump, GetNamedOpcode( "for_start" ) ) );
 							break;
 
 
@@ -1789,7 +1789,7 @@ namespace CraftyCode
 					}
 				}
 			}
-			else if ( IsRuleBranch && BranchRule.Name == "forstatement_third" )
+			else if ( IsRuleBranch && BranchRule.Name == "for_statement_third" )
 			{
 				for ( int i = 0; i < branches.Count; i++ )
 				{
@@ -1801,24 +1801,24 @@ namespace CraftyCode
 
 				ops.AddLast( new Operation( OpCode.ClearStack ) );
 			}
-			else if ( IsRuleBranch && BranchRule.Name == "whilestatement" )
+			else if ( IsRuleBranch && BranchRule.Name == "while_statement" )
 			{
 				TreeBranch tb = null;
 
 				ops.AddFirst( new Operation( OpCode.NoOperation ) );
-				ops.AddLast( new Operation( OpCode.NoOperation, "endofthisif" ) );
+				ops.AddLast( new Operation( OpCode.NoOperation, "end_of_this_if" ) );
 
-				if ( namedOpCodes.ContainsKey( "endofthisif" ) )
+				if ( namedOpCodes.ContainsKey( "end_of_this_if" ) )
 				{
-					namedOpCodes.Remove( "endofthisif" );
+					namedOpCodes.Remove( "end_of_this_if" );
 				}
-				namedOpCodes.Add( "endofthisif", ops.Last.Value );
+				namedOpCodes.Add( "end_of_this_if", ops.Last.Value );
 
 				for ( int i = 0; i < branches.Count; i++ )
 				{
 					tb = branches[i];
 
-					if ( tb.IsRuleBranch && tb.BranchRule.Name == "booleanexpression" )
+					if ( tb.IsRuleBranch && tb.BranchRule.Name == "boolean_expression" )
 					{
 						foreach ( Operation o in tb.GetOperations( ) )
 						{
@@ -1827,9 +1827,9 @@ namespace CraftyCode
 						}
 						ops.AddBefore( ops.Last, new Operation( OpCode.JumpIfFalse, ops.Last.Value ) ); // elseOp.Value
 					}
-					else if ( tb.IsRuleBranch && tb.BranchRule.Name == "statementlist" )
+					else if ( tb.IsRuleBranch && tb.BranchRule.Name == "statement_list" )
 					{
-						//ops.AddBefore( ops.Last, new Operation( OpCode.Dummy, "While statementlist start." ) );
+						//ops.AddBefore( ops.Last, new Operation( OpCode.Dummy, "While statement_list start." ) );
 						foreach ( Operation o in tb.GetOperations( ) )
 						{
 							ops.AddBefore( ops.Last, o );
@@ -1841,18 +1841,18 @@ namespace CraftyCode
 					}
 				}
 			}
-			else if ( IsRuleBranch && BranchRule.Name == "ifrootstatement" )
+			else if ( IsRuleBranch && BranchRule.Name == "if_root_statement" )
 			{
 				Operation oper = null;
 				LinkedListNode<Operation> elseOp = null;
 				for ( int i = 0; i < branches.Count; i++ )
 				{
 					if ( branches[i].IsRuleBranch &&
-						( branches[i].BranchRule.Name == "ifstatement" ||
-						branches[i].BranchRule.Name == "elseifstatement" ||
-						branches[i].BranchRule.Name == "elsestatement" ) )
+						( branches[i].BranchRule.Name == "if_statement" ||
+						branches[i].BranchRule.Name == "elseif_statement" ||
+						branches[i].BranchRule.Name == "else_statement" ) )
 					{
-						if ( branches[i].BranchRule.Name == "elsestatement" )
+						if ( branches[i].BranchRule.Name == "else_statement" )
 						{
 							ops.AddLast( new Operation( OpCode.NoOperation, "ElseStart" ) );
 							elseOp = ops.Last;
@@ -1892,30 +1892,30 @@ namespace CraftyCode
 					tb = branches[i];
 					if ( mode == 1 )
 					{
-						if ( tb.IsRuleBranch && tb.BranchRule.Name == "booleanexpression" )
+						if ( tb.IsRuleBranch && tb.BranchRule.Name == "boolean_expression" )
 						{
 							foreach ( Operation o in tb.GetOperations( ) )
 							{
 								//ops.AddBefore( o );
 								thisIf.AddBefore( thisIf.Last, o );
 							}
-							thisIf.AddBefore( thisIf.Last, new Operation( OpCode.JumpIfFalse, GetNamedOpcode( "endofthisif" ) ) ); // elseOp.Value
+							thisIf.AddBefore( thisIf.Last, new Operation( OpCode.JumpIfFalse, GetNamedOpcode( "end_of_this_if" ) ) ); // elseOp.Value
 						}
-						else if ( tb.IsTokenBranch && tb.BranchToken.Name == "CURLYOPEN" )
+						else if ( tb.IsTokenBranch && tb.BranchToken.Name == "CURLY_OPEN" )
 						{
 							mode = 2;
 						}
 					}
 					else if ( mode == 2 )
 					{
-						if ( tb.IsRuleBranch && tb.BranchRule.Name == "statementlist" )
+						if ( tb.IsRuleBranch && tb.BranchRule.Name == "statement_list" )
 						{
 							foreach ( Operation o in tb.GetOperations( ) )
 							{
 								thisIf.AddBefore( thisIf.Last, o );
 							}
 						}
-						else if ( tb.IsTokenBranch && tb.BranchToken.Name == "CURLYCLOSE" )
+						else if ( tb.IsTokenBranch && tb.BranchToken.Name == "CURLY_CLOSE" )
 						{
 							thisIf.AddFirst( new Operation( OpCode.StartBlock ) );
 							thisIf.AddBefore( thisIf.Last, new Operation( OpCode.EndBlock ) );
@@ -1933,18 +1933,18 @@ namespace CraftyCode
 							thisIf = new LinkedList<Operation>( );
 							oper = new Operation( OpCode.NoOperation );
 							thisIf.AddLast( oper );
-							if ( namedOpCodes.ContainsKey( "endofthisif" ) )
+							if ( namedOpCodes.ContainsKey( "end_of_this_if" ) )
 							{
-								namedOpCodes.Remove( "endofthisif" );
+								namedOpCodes.Remove( "end_of_this_if" );
 							}
-							namedOpCodes.Add( "endofthisif", oper );
+							namedOpCodes.Add( "end_of_this_if", oper );
 							continue;
 						}
-						else if ( tb.IsRuleBranch && tb.BranchRule.Name == "elsestatement" )
+						else if ( tb.IsRuleBranch && tb.BranchRule.Name == "else_statement" )
 						{
 							for ( int j = 0; j < tb.Branches.Count; j++ )
 							{
-								if ( tb.Branches[j].IsRuleBranch && tb.Branches[j].BranchRule.Name == "statementlist" )
+								if ( tb.Branches[j].IsRuleBranch && tb.Branches[j].BranchRule.Name == "statement_list" )
 								{
 									thisIf = new LinkedList<Operation>( );
 									ops.Remove( elseOp );
@@ -1991,7 +1991,7 @@ namespace CraftyCode
 				{
 					break;
 					/*
-					if ( t.IsRuleBranch && t.BranchRule.Name == "booleanexpression" )
+					if ( t.IsRuleBranch && t.BranchRule.Name == "boolean_expression" )
 					{
 						foreach ( Operation o in t.GetOperations( ) )
 						{
@@ -2001,7 +2001,7 @@ namespace CraftyCode
 						ops.AddBefore( ops.Last, new Operation( OpCode.JumpIfFalse, ops.Last.Value ) );
 						//ops.AddBefore( ops.Last, new Operation( OpCode.Discard ) );
 					}
-					else if ( t.IsRuleBranch && t.BranchRule.Name == "statementlist" )
+					else if ( t.IsRuleBranch && t.BranchRule.Name == "statement_list" )
 					{
 						foreach ( Operation o in t.GetOperations( ) )
 						{
@@ -2010,19 +2010,19 @@ namespace CraftyCode
 					}*/
 				}
 			}
-			else if ( IsRuleBranch && BranchRule.Name == "ifstatement" )
+			else if ( IsRuleBranch && BranchRule.Name == "if_statement" )
 			{
 
 			}
 			else if ( IsRuleBranch &&
-				  ( BranchRule.Name == "booleanexpression" || BranchRule.Name == "compoundbooleanexpression" ) )
+				  ( BranchRule.Name == "boolean_expression" || BranchRule.Name == "compound_boolean_expression" ) )
 			{
 				ops.AddLast( new Operation( OpCode.NoOperation ) );
 				TreeBranch tt = null;
 				for ( int i = 0; i < branches.Count; i++ )
 				{
 					tt = branches[i];
-					if ( tt.IsRuleBranch && tt.BranchRule.Name == "booleanexpression_more" )
+					if ( tt.IsRuleBranch && tt.BranchRule.Name == "boolean_expression_more" )
 					{
 						ReplaceBranchWithChildren( tt );
 						i = 0;
@@ -2045,7 +2045,7 @@ namespace CraftyCode
 						else if ( t.Branches[0].IsRuleBranch &&
 							( t.Branches[0].BranchRule.Name == "boolean_string_comparison" ||
 							t.Branches[0].BranchRule.Name == "boolean_float_comparison" ||
-							t.Branches[0].BranchRule.Name == "compoundbooleanexpression" ) )
+							t.Branches[0].BranchRule.Name == "compound_boolean_expression" ) )
 						{
 							foreach ( Operation o in t.Branches[0].GetOperations( ) )
 							{
@@ -2060,7 +2060,7 @@ namespace CraftyCode
 					else if ( t.IsTokenBranch && t.BranchToken.Name == "AND" )
 					{
 						if ( negate ) { ops.AddBefore( ops.Last, new Operation( OpCode.NegateBoolean ) ); negate = false; }
-						ops.AddBefore( ops.Last, new Operation( OpCode.JumpIfFalse, ParentBranch.GetNamedOpcode( "endofthisif" ) ) );
+						ops.AddBefore( ops.Last, new Operation( OpCode.JumpIfFalse, ParentBranch.GetNamedOpcode( "end_of_this_if" ) ) );
 					}
 					else if ( t.IsTokenBranch && t.BranchToken.Name == "OR" )
 					{
@@ -2116,33 +2116,33 @@ namespace CraftyCode
 				}
 				if ( Branches[1].IsTokenBranch )
 				{
-					if ( Branches[1].BranchToken.Name == "EQUITY" )
+					if ( Branches[1].BranchToken.Name == "EQUALITY" )
 					{
 						ops.AddLast( new Operation( OpCode.FloatEqualTo ) );
 					}
-					else if ( Branches[1].BranchToken.Name == "LESSTHAN" )
+					else if ( Branches[1].BranchToken.Name == "LESS_THAN" )
 					{
 						ops.AddLast( new Operation( OpCode.FloatLessThan ) );
 					}
-					else if ( Branches[1].BranchToken.Name == "NOTEQUAL" )
+					else if ( Branches[1].BranchToken.Name == "NOT_EQUAL" )
 					{
 						ops.AddLast( new Operation( OpCode.FloatNotEqualTo ) );
 					}
-					else if ( Branches[1].BranchToken.Name == "GREATERTHAN" )
+					else if ( Branches[1].BranchToken.Name == "GREATER_THAN" )
 					{
 						ops.AddLast( new Operation( OpCode.FloatGreaterThan ) );
 					}
-					else if ( Branches[1].BranchToken.Name == "GREATERTHANOREQUAL" )
+					else if ( Branches[1].BranchToken.Name == "GREATER_THAN_OR_EQUAL" )
 					{
 						ops.AddLast( new Operation( OpCode.FloatGreaterOrEqualTo ) );
 					}
-					else if ( Branches[1].BranchToken.Name == "LESSTHANOREQUAL" )
+					else if ( Branches[1].BranchToken.Name == "LESS_THAN_OR_EQUAL" )
 					{
 						ops.AddLast( new Operation( OpCode.FloatLessOrEqualTo ) );
 					}
 				}
 			}
-			else if ( IsRuleBranch && BranchRule.Name == "returnstatement" )
+			else if ( IsRuleBranch && BranchRule.Name == "return_statement" )
 			{
 				if ( branches.Count > 1 && branches[1].IsRuleBranch && branches[1].BranchRule.Name == "expression" )
 				{
@@ -2157,7 +2157,7 @@ namespace CraftyCode
 
 				//ops.AddLast(new Operation(OpCode.Jump,
 			}
-			else if ( IsRuleBranch && BranchRule.Name == "functiondeclare" )
+			else if ( IsRuleBranch && BranchRule.Name == "function_declare" )
 			{
 				string functionSignature = GenerateFunctionSignature( branches[1].BranchToken.StringValue, GetFunctionArgumentTypes( this, 3 ) );
 				Symbol function = GetSymbol( functionSignature );
@@ -2171,7 +2171,7 @@ namespace CraftyCode
 
 				for ( int f = 3; f < branches.Count; f++ )
 				{
-					if ( branches[f].IsTokenBranch && branches[f].BranchToken.Name == "CLOSEBRACKET" )
+					if ( branches[f].IsTokenBranch && branches[f].BranchToken.Name == "BRACKET_CLOSE" )
 					{
 						startBody = f + 1;
 						break;
@@ -2216,7 +2216,7 @@ namespace CraftyCode
 				ops.AddFirst( function.FunctionStartOp );
 				ops.AddFirst( new Operation( OpCode.Jump, ops.Last.Value ) );
 			}
-			else if ( IsRuleBranch && BranchRule.Name == "functioncall" )
+			else if ( IsRuleBranch && BranchRule.Name == "function_call" )
 			{
 				string functionSignature = GenerateFunctionSignature( branches[0].BranchToken.StringValue, GetFunctionArgumentTypes( this, 2 ) );
 				Symbol function = GetSymbol( functionSignature );
@@ -2253,12 +2253,12 @@ namespace CraftyCode
 				throw new CraftyException( "Must be token branches." );
 			}
 
-			if ( BranchToken.Name == "OPENBRACKET" )
+			if ( BranchToken.Name == "BRACKET_OPEN" )
 			{
 				return !true;
 			}
 
-			if ( t.BranchToken.Name == "OPENBRACKET" )
+			if ( t.BranchToken.Name == "BRACKET_OPEN" )
 			{
 				return !false;
 			}
@@ -2324,13 +2324,13 @@ namespace CraftyCode
 				}
 			}
 
-			if ( this.IsRuleBranch && BranchRule.Name == "booleanexpression" )
+			if ( this.IsRuleBranch && BranchRule.Name == "boolean_expression" )
 			{
-				//booleanexpression_more
+				//boolean_expression_more
 				soFar = new List<TreeBranch>( );
 				for ( int i = 0; i < Branches.Count; i++ )
 				{
-					if ( Branches[i].IsRuleBranch && Branches[i].BranchRule.Name == "booleanexpression_more" )
+					if ( Branches[i].IsRuleBranch && Branches[i].BranchRule.Name == "boolean_expression_more" )
 					{
 						//branches = new List<TreeBranch>( );
 						//branches.AddRange( Branches[i].Branches );
@@ -2353,7 +2353,7 @@ namespace CraftyCode
 
 				Debug.Print( "Melted {0} branch.", BranchRule.Name );
 			}
-			else if ( this.IsRuleBranch && BranchRule.Name == "booleanexpression_more" )
+			else if ( this.IsRuleBranch && BranchRule.Name == "boolean_expression_more" )
 			{
 				Branches[0] = Branches[0];
 				Branches[1] = Branches[1].Branches[0];
@@ -2437,7 +2437,7 @@ namespace CraftyCode
 			Symbol symbol = null;
 			IDictionary<string, Symbol> symbolList = null;
 			symbolList = this.SymbolList;//TreeRoot.symbols;
-			if ( IsRuleBranch && ( BranchRule.Name == "variable_declaration_statement" || BranchRule.Name == "assignstatement" ) )
+			if ( IsRuleBranch && ( BranchRule.Name == "variable_declaration_statement" || BranchRule.Name == "assign_statement" ) )
 			{
 				string typeA = null;
 				string typeB = null;
@@ -2475,12 +2475,12 @@ namespace CraftyCode
 			{
 				foreach ( TreeBranch branch in GetBranches( false ) )
 				{
-					if ( branch.IsRuleBranch && branch.BranchRule.Name == "functiondeclare" )
+					if ( branch.IsRuleBranch && branch.BranchRule.Name == "function_declare" )
 					{
 						continue;
 					}
 
-					if ( ( branch.IsTokenBranch && branch.BranchToken.Name == "IDENTIFIER" ) || ( branch.IsRuleBranch && branch.BranchRule.Name == "functioncall" ) )
+					if ( ( branch.IsTokenBranch && branch.BranchToken.Name == "IDENTIFIER" ) || ( branch.IsRuleBranch && branch.BranchRule.Name == "function_call" ) )
 					{
 						//s = symbolList[b.BranchToken.StringValue];
 						if ( branch.IsTokenBranch )
