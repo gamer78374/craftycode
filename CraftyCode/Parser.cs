@@ -15,12 +15,11 @@ namespace CraftyCode
 		List<Token> tokens = null;
 		Dictionary<string, ParsingRule> rules = null;
 
-		public Parser ( Token[] input, IList<string> validTokens )
+		public Parser ( Token[] input)
 		{
 			IsCompleted = false;
-			tokens = new List<Token>( );
-			tokens.AddRange( input );
-			SetupRules( validTokens );
+			tokens = new List<Token>( input );
+			SetupRules( );
 		}
 
 		public bool RulesContains ( string k )
@@ -59,7 +58,7 @@ namespace CraftyCode
 			}
 		}
 
-		private void SetupRules ( IList<string> validTokens )
+		private void SetupRules ( )
 		{
 			try
 			{
@@ -140,7 +139,7 @@ namespace CraftyCode
 					{
 						foreach ( ParsingStep step in kvp.Value.GetOptionSteps( i ) )
 						{
-							if ( !rules.ContainsKey( step.Value ) && !validTokens.Contains( step.Value ) )
+							if ( !rules.ContainsKey( step.Value ) && !Token.IsTokenValid( step.Value ) ) 
 							{
 								throw new CraftyException( string.Format( "Step \"{0}\" in rule \"{1}\" is not a valid token or rule name.", step.Value, kvp.Key ) );
 							}

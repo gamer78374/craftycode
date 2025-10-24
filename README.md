@@ -4,12 +4,15 @@ A rudimentary scripting language implemented in C#.
 Software contributors: Damien Otis. 
 
 ## Technical information
-Version: 0.0.2  
+Version: 0.2.0
 Supported platforms: Windows  
-Known supported IDE: Visual Studio Community 2022
+Known supported IDEs: Visual Studio Community 2022
+
+## Prerequisutes
++ **Sandcastle Help File Builder** to build documentaion
 
 ## Structure
-The solution contains 3 projects: 
+The solution contains *four* projects: 
 
 ### CraftyCode
 A class library containing the main elements of the software. Included are classes for exceptions, parser, lexical analiser, tokeniser, a bytecode compiler and virtual machine, an operation stack. 
@@ -19,6 +22,9 @@ A winforms app which provides a very basic visual IDE for compiling, executing, 
 
 ### SimpleTester
 A command line application which some basic features to validate the proper interpretation of the grammar rules of the programming language. 
+
+### DocCC
+This is a Sandcastle project which builds the documenation for the code. Outputs to **DocCC/Help/**. 
 
 ## Language
 The crafty code language is defined through text from the source code. The language is intended as a lightweight scripting language for games and other applications which require both high-data throughput with dynamic behaviour. 
@@ -226,10 +232,3 @@ not
 arithmatic
     float_arithmatic_expression
 ```
-
-## TODO
-+ (**Breeze**) Document code with /// comments for automated documentation generation with Sandcastle
-+ (**Intermediate**) Load rules and tokens from text files rather than in code
-+ (**Intermediate**) Implement grammar for other languages, such as Lua
-+ (**Intermediate**) Extern functions 
-+ (**Beyond my skill**) Deprecate virtual machine in favour of LVMM implementation with support for CraftyCode or other bytecode 

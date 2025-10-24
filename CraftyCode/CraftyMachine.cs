@@ -283,6 +283,8 @@ namespace CraftyCode
 
 		public bool IsMidExecution { get { return nextOp != null; } }
 
+		//Func<void>
+
 		public int Run ( int steps )
 		{
 			if ( currentSymbolTable == null )
@@ -314,6 +316,9 @@ namespace CraftyCode
 				if ( currentOp != null )
 				{
 					nextOp = currentOp.Next;
+
+
+
 					switch ( currentOp.Code )
 					{
 						case OpCode.NoOperation:

@@ -34,7 +34,7 @@ namespace CraftyCode
 
 		public void OutputRules ( string folder )
 		{
-			throw new NotImplementedException( );
+			//throw new NotImplementedException( );
 			folder = Path.Combine( folder, "CraftyRules" );
 			if ( !Directory.Exists( folder ) )
 			{
@@ -301,8 +301,12 @@ namespace CraftyCode
 			//StringBuilder sb = new StringBuilder( );
 			List<Token> tokens = new List<Token>( );
 			tokens.Add( new Token( "END_STATEMENT", 0, 0 ) );
+			
+			/*
 			Dictionary<string, string> patterns = new Dictionary<string, string>( );
+			
 			validTokens = new List<string>( );
+			
 			patterns.Add( @"\r\n", "NEW_LINE" );
 			patterns.Add( @"\n", "NEW_LINE" );
 			patterns.Add( @"[ \t]", "WHITESPACE" );
@@ -366,16 +370,10 @@ namespace CraftyCode
 			patterns.Add( @"%", "MOD" );
 			patterns.Add( @"\{", "CURLY_OPEN" );
 			patterns.Add( @"\}", "CURLY_CLOSE" );
-
 			patterns.Add( "\"", "\"" );
 			patterns.Add( "'", "\'" );
-
-			//patterns.Add( @"[0-9]+[^\.]", "INTEGER" );
-			//patterns.Add( @"\$[a-z][a-z0-9]*", "VID" );
 			patterns.Add( ";", "END_STATEMENT" );
 			patterns.Add( "*", "ILLEGAL" );
-
-			//patterns.
 
 			foreach ( KeyValuePair<string, string> kvp in patterns )
 			{
@@ -384,7 +382,8 @@ namespace CraftyCode
 
 			validTokens.Add( "STRING" );
 			validTokens.Add( "TYPE_IDENTIFIER" );
-			
+			*/
+
 			Dictionary<int, int> tokenOnLine = new Dictionary<int, int>( );
 
 			int start = 0;
@@ -400,31 +399,31 @@ namespace CraftyCode
 			int commentLevel = 0;
 			ASCIIEncoding encoder = new ASCIIEncoding( );
 
-			IEnumerable<KeyValuePair<string, string>> patternQuery = from kvp in patterns select kvp; //orderby kvp.Key.Length descending
+			IEnumerable<TokenPattern> patternQuery = from kvp in Token.TokenPatterns select kvp; 
 
 			while ( true )
 			{
 				tryMatch = input.Substring( start );
-				foreach ( KeyValuePair<string, string> kvp in patternQuery )
+				foreach ( TokenPattern kvp in patternQuery )
 				{
-					if ( Regex.IsMatch( tryMatch, "^" + kvp.Key, RegexOptions.IgnoreCase ) )
+					if ( Regex.IsMatch( tryMatch, "^" + kvp.RegexPattern, RegexOptions.IgnoreCase ) )
 					{
-						tryString = Regex.Match( tryMatch, kvp.Key, RegexOptions.IgnoreCase ).Value;
+						tryString = Regex.Match( tryMatch, kvp.RegexPattern, RegexOptions.IgnoreCase ).Value;
 
-						if ( kvp.Value == "ILLEGAL" )
+						if ( kvp.TokenText == "ILLEGAL" )
 						{
 							throw new CraftyException( string.Format( "Illegal string \"{0}\" on line number {1}.", tryString, lineNumber ) );
 						}
 
-						if ( kvp.Value == "IDENTIFIER" )
+						if ( kvp.TokenText == "IDENTIFIER" )
 						{
-							foreach ( KeyValuePair<string, string> subKvp in patterns )
+							foreach ( TokenPattern token_pattern in Token.TokenPatterns )
 							{
-								if ( Regex.IsMatch( subKvp.Key, "[^a-z0-9]", RegexOptions.IgnoreCase ) )
+								if ( Regex.IsMatch( token_pattern.RegexPattern, "[^a-z0-9]", RegexOptions.IgnoreCase ) )
 								{
 									continue;
 								}
-								if ( tryString == subKvp.Key )
+								if ( tryString == token_pattern.RegexPattern )
 								{
 									goto InvalidID;
 								}
@@ -439,7 +438,7 @@ namespace CraftyCode
 							//tokens.Add( tryString );
 							//sb.Append( tryString + "" );
 						}
-						else if ( kvp.Value == "INTEGER" )
+						else if ( kvp.TokenText == "INTEGER" )
 						{
 							tryResult = int.TryParse( tryString, out tryInt);
 							if ( !tryResult )
@@ -452,7 +451,7 @@ namespace CraftyCode
 							//tokens.Add( new Token( "INTEGER", tokens.Count + 1, lineNumber ) );
 							//sb.Append( tryString + "" );
 						}
-						else if ( kvp.Value == "FLOAT" )
+						else if ( kvp.TokenText == "FLOAT" )
 						{
 							tryResult = float.TryParse( tryString, out tryFloat );
 							if ( !tryResult )
@@ -462,31 +461,31 @@ namespace CraftyCode
 							tokens.Add( new Token( "FLOAT", tokens.Count + 1, lineNumber, tryFloat ) );
 							//sb.Append( tryString + "" );
 						}
-						else if ( kvp.Value == "\"" || kvp.Value == "\'" )
+						else if ( kvp.TokenText == "\"" || kvp.TokenText == "\'" )
 						{
 							//tokens.Add( new Token( "STRING", lineNumber, kvp.Value ) );
 							//tokens.Add( "STRING" + kvp.Value );
 							//sb.Append( tryString + "" );
 						}
-						else if ( kvp.Value == "LINE_COMMENT" )
+						else if ( kvp.TokenText == "LINE_COMMENT" )
 						{
 							//lineNumber++;
 						}
-						else if ( kvp.Value == "WHITESPACE" || kvp.Value == "NEW_LINE" )
+						else if ( kvp.TokenText == "WHITESPACE" || kvp.TokenText== "NEW_LINE" )
 						{
-							if ( kvp.Value == "NEW_LINE" )
+							if ( kvp.TokenText == "NEW_LINE" )
 							{
 								lineNumber++;
 							}
 						}
-						else if ( kvp.Value == "LONG_COMMENT" )
+						else if ( kvp.TokenText == "LONG_COMMENT" )
 						{
 							commentLevel++;
 						}
 						else
 						{
 							//tokens.Add( kvp.Value );
-							tokens.Add( new Token( kvp.Value, tokens.Count + 1, lineNumber ) );
+							tokens.Add( new Token( kvp.TokenText, tokens.Count + 1, lineNumber ) );
 							/*if ( kvp.Value == "FOR" )
 							{
 								int kkk = 0;
@@ -496,7 +495,7 @@ namespace CraftyCode
 						start += tryString.Length;
 						length = 0;
 						current = start;
-						if ( kvp.Value == "LONG_COMMENT" )
+						if ( kvp.TokenText == "LONG_COMMENT" )
 						{
 							while ( commentLevel > 0 )
 							{
@@ -515,9 +514,9 @@ namespace CraftyCode
 							start += length;
 							start++;
 						}
-						else if ( kvp.Key == "\"" || kvp.Key == "\'" )
+						else if ( kvp.RegexPattern== "\"" || kvp.RegexPattern== "\'" )
 						{
-							while ( !Regex.IsMatch( input.Substring( current, 1 ), kvp.Key, RegexOptions.IgnoreCase ) )
+							while ( !Regex.IsMatch( input.Substring( current, 1 ), kvp.RegexPattern, RegexOptions.IgnoreCase ) )
 							{
 								current++;
 								length++;
@@ -532,7 +531,7 @@ namespace CraftyCode
 							start++;
 							//sb.Append( kvp.Value + "" );
 						}
-						else if ( kvp.Value == "LINE_COMMENT" )
+						else if ( kvp.TokenText == "LINE_COMMENT" )
 						{
 							while ( !Regex.IsMatch( input.Substring( current, 1 ), "[\r\n]" ) )
 							{
@@ -584,7 +583,7 @@ namespace CraftyCode
 
 			try
 			{
-				parser = new Parser( input, validTokens );
+				parser = new Parser( input );
 				parser.Parse( );
 			}
 			catch ( CraftyException exception )

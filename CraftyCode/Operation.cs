@@ -5,11 +5,10 @@ using System.Text;
 
 namespace CraftyCode
 {
-#if DEBUG
+	/// <summary>
+	/// Represents an opcode.
+	/// </summary>
 	public class Operation
-#else
-	internal class Operation
-#endif
 	{
 		public OpCode Code;
 		public Operation JumpToOperation;
@@ -29,6 +28,7 @@ namespace CraftyCode
 				return Symbol == null ? stringValue : Symbol.StringValue;
 			}
 		}
+		
 		protected bool boolValue;
 		public bool BoolValue
 		{
@@ -37,6 +37,7 @@ namespace CraftyCode
 				return Symbol == null ? boolValue : Symbol.BooleanValue;
 			}
 		}
+		
 		protected float floatValue;
 		public float FloatValue
 		{
@@ -90,11 +91,8 @@ namespace CraftyCode
 	/// <summary>
 	/// Virtual machine operations.
 	/// </summary>
-#if DEBUG
+
 	public enum OpCode : byte
-#else 
-	internal enum OpCode : byte
-#endif
 	{
 		/// <summary>
 		/// Perform no operation.

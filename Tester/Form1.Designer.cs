@@ -83,7 +83,7 @@
 			// treeSyntaxTree
 			// 
 			this.treeSyntaxTree.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.treeSyntaxTree.Font = new System.Drawing.Font("Courier New", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.treeSyntaxTree.Font = new System.Drawing.Font("Courier New", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.treeSyntaxTree.Location = new System.Drawing.Point(4, 27);
 			this.treeSyntaxTree.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
 			this.treeSyntaxTree.Name = "treeSyntaxTree";
@@ -238,7 +238,7 @@
 			this.flowLayoutPanel1.Controls.Add(this.buttonStep);
 			this.flowLayoutPanel1.Controls.Add(this.button2);
 			this.flowLayoutPanel1.Location = new System.Drawing.Point(24, 23);
-			this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+			this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(6);
 			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
 			this.flowLayoutPanel1.Size = new System.Drawing.Size(1860, 102);
 			this.flowLayoutPanel1.TabIndex = 8;
@@ -340,9 +340,9 @@
 			this.groupBox5.Controls.Add(this.listViewCallStack);
 			this.groupBox5.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.groupBox5.Location = new System.Drawing.Point(1494, 6);
-			this.groupBox5.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+			this.groupBox5.Margin = new System.Windows.Forms.Padding(6);
 			this.groupBox5.Name = "groupBox5";
-			this.groupBox5.Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
+			this.groupBox5.Padding = new System.Windows.Forms.Padding(6);
 			this.groupBox5.Size = new System.Drawing.Size(364, 1035);
 			this.groupBox5.TabIndex = 6;
 			this.groupBox5.TabStop = false;
@@ -379,7 +379,7 @@
 			this.ClientSize = new System.Drawing.Size(1908, 1200);
 			this.Controls.Add(this.tableLayoutPanel1);
 			this.Controls.Add(this.flowLayoutPanel1);
-			this.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+			this.Margin = new System.Windows.Forms.Padding(6);
 			this.MinimumSize = new System.Drawing.Size(1258, 866);
 			this.Name = "Form1";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
