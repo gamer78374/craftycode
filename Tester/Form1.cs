@@ -201,7 +201,7 @@ namespace Tester
 
 			if ( machine == null )
 			{
-				machine = new DebugCraftyMachine( craftyEngine ); // .Parser.ProgramRoot.Operations.ToArray( )
+				machine = new DebugCraftyMachine( new CraftyInstructionSet(), craftyEngine ); // .Parser.ProgramRoot.Operations.ToArray( )
 			}
 
 			watch = new Stopwatch( );
@@ -223,7 +223,7 @@ namespace Tester
 			}
 			if ( machine == null )
 			{
-				machine = new DebugCraftyMachine( craftyEngine );
+				machine = new DebugCraftyMachine( new CraftyInstructionSet(), craftyEngine );
 			}
 
 			machine.Run( 1 );
@@ -404,7 +404,7 @@ namespace Tester
 					{
 						moreinfo = o.FloatValue.ToString( );
 					}
-					else if ( o.StringValue != null && ( o.Code == OpCode.PushString || o.Code == OpCode.Dummy || o.Code == OpCode.NoOperation ) )
+					else if ( o.StringValue != null && ( o.Code == OpCode.PushString || o.Code == OpCode.DHook || o.Code == OpCode.NoOperation ) )
 					{
 						moreinfo = o.StringValue;
 					}

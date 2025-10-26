@@ -181,7 +181,7 @@ namespace CraftyCode
 			TreeBranch currentTreeBranch = null;
 			bool foundOperator = false;
 			bool foundOperand = false;
-			ops.AddLast( new Operation( OpCode.Dummy, "IntermediateExpression." ) );
+			ops.AddLast( new Operation( OpCode.DHook, "IntermediateExpression." ) );
 
 			for ( int j = 0; j < branches.Count; j++ )
 			{

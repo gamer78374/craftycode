@@ -11,7 +11,7 @@ namespace CraftyCode
 	/// </summary>
 	public class CraftyMachine
 	{
-		public CraftyMachine ( params Operation[] ops )
+		public CraftyMachine ( InstructionSet exeset, params Operation[] ops )
 		{
 			operationsList = new List<Operation>( );
 			for ( int i = 0; i < ops.Length; i++ )
@@ -20,12 +20,17 @@ namespace CraftyCode
 				operationsList.Add( ops[i] );
 			}
 
+			State.SymbolTableCollection = new SymbolTableCollection( );
+			State.CallStack = new Stack<Operation>( );
+			State.VariableStack = new CraftyStack( );
 			//ClearSymbolTable( );
+			InstructionSet = exeset;
 		}
 
-		public CraftyMachine ( CraftyInstance instance ) : this( instance.Parser ) { }
-		public CraftyMachine ( Parser parser ) : this( parser.ProgramRoot.Operations.ToArray( ) ) { }
+		public CraftyMachine ( InstructionSet exeset, CraftyInstance instance ) : this( exeset, instance.Parser ) { }
+		public CraftyMachine ( InstructionSet exeset, Parser parser ) : this( exeset, parser.ProgramRoot.Operations.ToArray( ) ) { }
 
+		public InstructionSet InstructionSet = null;
 		protected LinkedList<Operation> operations = new LinkedList<Operation>( );
 		protected List<Operation> operationsList { get; private set; }
 
@@ -40,9 +45,11 @@ namespace CraftyCode
 		 ********* CraftyContext code ***********
 		 **************************************/
 
+		public InstructionState State = new InstructionState( );
+	
+		/*
 		protected Operation currentOp;
 		protected Operation nextOp;
-		//LinkedList<Operation> operations = null;
 
 		protected CraftyStack variableStack = new CraftyStack( );
 		protected Stack<Symbol> blockMarkers = new Stack<Symbol>( );
@@ -51,12 +58,15 @@ namespace CraftyCode
 
 		protected Stack<Operation> callStack = new Stack<Operation>( );
 
+		public SymbolTableCollection SymbolCollection = new SymbolTableCollection( );*/
+
+		/*
 		protected Stack<List<Symbol>> symbolTables = new Stack<List<Symbol>>( );
 		protected IList<Symbol> currentSymbolTable
 		{
 			get { return symbolTables.Count > 0 ? symbolTables.Peek( ) : null; }
 		}
-
+		*/
 		/// <summary>
 		/// If positive, interrupts are not allowed. If 0, interrupts are allowed.
 		/// </summary>
@@ -66,7 +76,7 @@ namespace CraftyCode
 		{
 			return Run( -2 );
 		}
-
+		/*
 		private void MarkSymbolTable ( )
 		{
 			Symbol mark = new Symbol( );
@@ -103,14 +113,7 @@ namespace CraftyCode
 					return i;
 				}
 			}
-			/*
-			for ( int i = 0; i < symbols.Count; i++ )
-			{
-				if ( symbols[i].Name == name )
-				{
-					return i;
-				}
-			}*/
+	
 			return -1;
 		}
 
@@ -141,12 +144,6 @@ namespace CraftyCode
 				if ( symbolIndex != currentSymbolTable.Count - 1 )
 				{
 					Symbol temp = currentSymbolTable[symbolIndex];
-					/*for ( int i = symbolIndex; i < symbols.Count; i++ )
-					{
-						if ( i + 1 == symbols.Count ) { break; }
-						symbols[i] = symbols[i + 1];
-					}
-					symbols[symbols.Count - 1] = temp;*/
 					currentSymbolTable.RemoveAt( symbolIndex );
 					currentSymbolTable.Add( temp );
 				}
@@ -219,11 +216,6 @@ namespace CraftyCode
 			{
 				currentSymbolTable[i].IsActive = false;
 			}
-
-			foreach ( Operation o in operations )
-			{
-				o.Symbol = null;
-			}
 		}
 
 		private void ClearSymbol ( string name )
@@ -280,22 +272,24 @@ namespace CraftyCode
 				currentSymbolTable[i].IsActive = false;
 			}
 		}
-
-		public bool IsMidExecution { get { return nextOp != null; } }
-
-		//Func<void>
+		*/
+		public bool IsMidExecution { get { return State.NextOp != null; } }
 
 		public int Run ( int steps )
 		{
-			if ( currentSymbolTable == null )
+			if ( State.SymbolTableCollection.CurrentSymbolTable == null )
 			{
-				symbolTables.Push( new List<Symbol>( ) );
+				State.SymbolTableCollection.SymbolTables.Push( new List<Symbol>( ) );
 			}
 
-			if ( nextOp == null )
+			if ( State.NextOp == null )
 			{
-				ClearSymbolTable( );
-				nextOp = operations.First.Value;
+				State.SymbolTableCollection.ClearSymbolTable( );
+				foreach ( Operation o in operations )
+				{
+					o.Symbol = null;
+				}
+				State.NextOp = operations.First.Value;
 			}
 
 			string debugString = "";
@@ -311,307 +305,24 @@ namespace CraftyCode
 				//{
 				debugString = null;
 
-				currentOp = nextOp;
+				State.CurrentOp = State.NextOp;
 
-				if ( currentOp != null )
+				if ( State.CurrentOp != null )
 				{
-					nextOp = currentOp.Next;
+					State.NextOp = State.CurrentOp.Next;
 
-
-
-					switch ( currentOp.Code )
+					if ( InstructionSet.Operations[ (int) State.CurrentOp.Code ]( State ) )
 					{
-						case OpCode.NoOperation:
-							break;
-						case OpCode.PushBoolean:
-							if ( executeDebug )
-							{
-								debugString = currentOp.BoolValue.ToString( );
-							}
-							variableStack.Push( currentOp.BoolValue );
-							break;
-						case OpCode.PushString:
-							if ( executeDebug ) { debugString = currentOp.StringValue; }
-							variableStack.Push( currentOp.StringValue );
-							break;
-						case OpCode.PushFloat:
-							if ( executeDebug )
-							{
-								debugString = currentOp.FloatValue.ToString( );
-							}
-							variableStack.Push( currentOp.FloatValue );
-							break;
-						case OpCode.PushSymbol:
-							if ( executeDebug )
-							{
-								debugString = string.Format( "{0}", currentOp.Symbol.Name );
-							}
-
-							/*
-							if ( currentOp.Symbol == null )
-							{
-								currentOp.Symbol = GetSymbolByName( currentOp.SymbolName, true );
-							}
-
-							stack.Push( currentOp.Symbol );
-							 */
-							variableStack.Push( GetSymbolByName( currentOp.SymbolName, true ) );
-							break;
-						case OpCode.Store:
-							if ( executeDebug )
-							{
-								debugString = string.Format( "Setting symbol {0} to ", currentOp.Symbol.Name );
-								if ( currentOp.Symbol.IsBool )
-								{
-									debugString += variableStack.PeekBoolean( );
-								}
-								else if ( currentOp.Symbol.IsNumeric )
-								{
-									debugString += variableStack.PeekFloat( );
-								}
-								else if ( currentOp.Symbol.IsString )
-								{
-									debugString += variableStack.PeekString( );
-								}
-								debugString += ".";
-							}
-
-							/*
-							if ( currentOp.Symbol == null )
-							{
-								currentOp.Symbol = GetSymbolByName( currentOp.SymbolName, true );
-							}
-
-							stack.PeekSymbol( currentOp.Symbol );
-							*/
-							variableStack.PeekSymbol( GetSymbolByName( currentOp.SymbolName, true ) );
-
-							if ( executeDebug )
-							{
-								if ( currentOp.Symbol.IsBool )
-								{
-									debugString += string.Format( " Set to {0}.", currentOp.Symbol.BooleanValue );
-								}
-								else if ( currentOp.Symbol.IsNumeric )
-								{
-									debugString += string.Format( " Set to {0}.", currentOp.Symbol.FloatValue );
-								}
-								else if ( currentOp.Symbol.IsString )
-								{
-									debugString += string.Format( " Set to {0}.", currentOp.Symbol.StringValue );
-								}
-							}
-							break;
-						case OpCode.GetTop:
-							throw new CraftyException( "Invalid OpCode GetTop." );
-						case OpCode.Discard:
-							variableStack.Discard( );
-							break;
-						case OpCode.Jump:
-							nextOp = currentOp.JumpToOperation;
-
-							if ( executeDebug )
-							{
-								debugString = string.Format( "Jumping from {0} ({1}) to {2} ({3}).", currentOp.Code, currentOp.Number, nextOp.Code, nextOp.Number );
-							}
-
-							if ( nextOp == null )
-							{
-								throw new CraftyException( "Jump instruction points to an instruction that does not exist!" );
-							}
-							break;
-						case OpCode.JumpIfFalse:
-							if ( !variableStack.PopBoolean( ) )
-							{
-								nextOp = currentOp.JumpToOperation;
-								if ( executeDebug )
-								{
-									debugString = string.Format( "Jumping from {0} ({1}) to {2} ({3}).", currentOp.Code, currentOp.Number, nextOp.Code, nextOp.Number );
-								}
-
-								if ( nextOp == null )
-								{
-									throw new CraftyException( "Jump instruction points to an instruction that does not exist!" );
-								}
-							}
-							else
-							{
-								if ( executeDebug )
-								{
-									debugString = string.Format( "Not jumping from {0} ({1}).", currentOp.Code, currentOp.Number );
-								}
-							}
-							break;
-						case OpCode.JumpIfTrue:
-							if ( variableStack.PopBoolean( ) )
-							{
-								nextOp = currentOp.JumpToOperation;
-								if ( executeDebug )
-								{
-									debugString = string.Format( "Jumping from {0} ({1}) to {2} ({3}).", currentOp.Code, currentOp.Number, nextOp.Code, nextOp.Number );
-								}
-								if ( nextOp == null )
-								{
-									throw new CraftyException( "Jump instruction points to an instruction that does not exist!" );
-								}
-							}
-							else
-							{
-								if ( executeDebug )
-								{
-									debugString = string.Format( "Not jumping from {0} ({1}).", currentOp.Code, currentOp.Number );
-								}
-							}
-							break;
-						case OpCode.FloatEqualTo:
-							floatRegisterOne = variableStack.PopFloat( );
-							floatRegisterTwo = variableStack.PopFloat( );
-							variableStack.Push( floatRegisterOne == floatRegisterTwo );
-							if ( executeDebug ) { debugString = string.Format( "{0} != {1}: {2}", floatRegisterOne, floatRegisterTwo, variableStack.PeekBoolean( ) ); }
-							break;
-						case OpCode.FloatGreaterThan:
-							floatRegisterTwo = variableStack.PopFloat( );
-							floatRegisterOne = variableStack.PopFloat( );
-							variableStack.Push( floatRegisterOne > floatRegisterTwo );
-							if ( executeDebug ) { debugString = string.Format( "{0} > {1}: {2}", floatRegisterOne, floatRegisterTwo, variableStack.PeekBoolean( ) ); }
-							break;
-						case OpCode.FloatLessThan:
-							floatRegisterTwo = variableStack.PopFloat( );
-							floatRegisterOne = variableStack.PopFloat( );
-							variableStack.Push( floatRegisterOne < floatRegisterTwo );
-							if ( executeDebug ) { debugString = string.Format( "{0} < {1}: {2}", floatRegisterOne, floatRegisterTwo, variableStack.PeekBoolean( ) ); }
-							break;
-						case OpCode.FloatGreaterOrEqualTo:
-							floatRegisterTwo = variableStack.PopFloat( );
-							floatRegisterOne = variableStack.PopFloat( );
-							variableStack.Push( floatRegisterOne >= floatRegisterTwo );
-							if ( executeDebug ) { debugString = string.Format( "{0} >= {1}: {2}", floatRegisterOne, floatRegisterTwo, variableStack.PeekBoolean( ) ); }
-							break;
-						case OpCode.FloatLessOrEqualTo:
-							floatRegisterTwo = variableStack.PopFloat( );
-							floatRegisterOne = variableStack.PopFloat( );
-							variableStack.Push( floatRegisterOne <= floatRegisterTwo );
-							if ( executeDebug ) { debugString = string.Format( "{0} <= {1}: {2}", floatRegisterOne, floatRegisterTwo, variableStack.PeekBoolean( ) ); }
-							break;
-						case OpCode.FloatNotEqualTo:
-							floatRegisterTwo = variableStack.PopFloat( );
-							floatRegisterOne = variableStack.PopFloat( );
-							variableStack.Push( floatRegisterOne != floatRegisterTwo );
-							if ( executeDebug ) { debugString = string.Format( "{0} != {1}: {2}", floatRegisterOne, floatRegisterTwo, variableStack.PeekBoolean( ) ); }
-							break;
-						case OpCode.StringEqualTo:
-							variableStack.Push( variableStack.PopString( ) == variableStack.PopString( ) );
-							break;
-						case OpCode.JumpTarget:
-							// Do nothing.
-							break;
-						case OpCode.NegateBoolean:
-							variableStack.NegateBoolean( );
-							break;
-						case OpCode.Increment:
-							variableStack.IncrementFloat( );
-							break;
-						case OpCode.Decrement:
-							variableStack.DecrementFloat( );
-							break;
-						case OpCode.Multiply:
-							//floatRegisterTwo = stack.PopFloat( );
-							//floatRegisterOne = stack.PopFloat( );
-							variableStack.Push( variableStack.PopFloat( ) * variableStack.PopFloat( ) );
-							break;
-						case OpCode.Add:
-							variableStack.Push( variableStack.PopFloat( ) + variableStack.PopFloat( ) );
-							break;
-						case OpCode.SubtractReverse:
-							// Used for cases where the values on the stack are in reverse order.
-							floatRegisterOne = variableStack.PopFloat( );
-							floatRegisterTwo = variableStack.PopFloat( );
-							variableStack.Push( floatRegisterOne - floatRegisterTwo );
-							break;
-						case OpCode.Subtract:
-							floatRegisterTwo = variableStack.PopFloat( );
-							floatRegisterOne = variableStack.PopFloat( );
-							variableStack.Push( floatRegisterOne - floatRegisterTwo );
-							break;
-						case OpCode.DivideReverse:
-							// Used for cases where the values on the stack are in reverse order.
-							floatRegisterOne = variableStack.PopFloat( );
-							floatRegisterTwo = variableStack.PopFloat( );
-							variableStack.Push( floatRegisterOne / floatRegisterTwo );
-							break;
-						case OpCode.Divide:
-							floatRegisterTwo = variableStack.PopFloat( );
-							floatRegisterOne = variableStack.PopFloat( );
-							variableStack.Push( floatRegisterOne / floatRegisterTwo );
-							break;
-						case OpCode.ModulusReverse:
-							// Used for cases where the values on the stack are in reverse order.
-							floatRegisterOne = variableStack.PopFloat( );
-							floatRegisterTwo = variableStack.PopFloat( );
-							variableStack.Push( floatRegisterOne % floatRegisterTwo );
-							break;
-						case OpCode.Modulus:
-							floatRegisterTwo = variableStack.PopFloat( );
-							floatRegisterOne = variableStack.PopFloat( );
-							variableStack.Push( floatRegisterOne % floatRegisterTwo );
-							break;
-						case OpCode.SwapFloatRegisters:
-							float temp = floatRegisterOne;
-							floatRegisterOne = floatRegisterTwo;
-							floatRegisterTwo = temp;
-							break;
-						case OpCode.InvertFloat:
-							variableStack.Push( -variableStack.PopFloat( ) );
-							break;
-						case OpCode.LogicalOr:
-							variableStack.Push( variableStack.PopBoolean( ) || variableStack.PopBoolean( ) );
-							break;
-						case OpCode.LogicalAnd:
-							variableStack.Push( variableStack.PopBoolean( ) && variableStack.PopBoolean( ) );
-							break;
-						case OpCode.ClearStack:
-							variableStack.Clear( );
-							break;
-						case OpCode.Dummy:
-							// Do nothing.
-							break;
-						case OpCode.StartBlock:
-							MarkSymbolTable( );
-							break;
-						case OpCode.EndBlock:
-							ClearSymbolTableToMark( );
-							break;
-						case OpCode.StartSolidBlock:
-							interruptsAllowed++;
-							break;
-						case OpCode.EndSolidBlock:
-							interruptsAllowed--;
-							break;
-						case OpCode.InitSymbol: 
-							InitSymbol( currentOp.StringValue, variableStack.PopString( ) );
-							break;
-						case OpCode.StartFunctionBlock:
-							PushNewSymbolTable( );
-							
-							break;
-						case OpCode.EndFunctionBlock:
-							DiscardSymbolTable( );
-							nextOp = callStack.Pop( );
-							break;
-						case OpCode.DogEarCallStack:
-							callStack.Push( currentOp.Next.Next );
-							break;
-						default:
-							throw new CraftyException( string.Format( "Unknown opcode {0}.", currentOp.Code.ToString( ) ) );
+						// Success
 					}
 
 					if ( executeDebug )
 					{
-						string stackString = "(" + variableStack.Count.ToString( ) + ") ";
+						string stackString = "(" + State.VariableStack.Count.ToString( ) + ") ";
 
-						for ( int i = 0; i < variableStack.Count; i++ )
+						for ( int i = 0; i < State.VariableStack.Count; i++ )
 						{
-							stackString += "[(bool) " + variableStack[i].BooleanValue.ToString( ) + " (string) " + variableStack[i].StringValue + " (float) " + variableStack[i].FloatValue.ToString( ) + "] ";
+							stackString += "[(bool) " + State.VariableStack[ i].BooleanValue.ToString( ) + " (string) " + State.VariableStack[i].StringValue + " (float) " + State.VariableStack[i].FloatValue.ToString( ) + "] ";
 						}
 
 						if ( debugString == null )
@@ -622,18 +333,18 @@ namespace CraftyCode
 						{
 							debugString = ": " + debugString;
 						}
-						Debug.Print( string.Format( "{0} {1}{2}", currentOp.Number.ToString( ).PadRight( 8 ), currentOp.Code, debugString ) );
+						Debug.Print( string.Format( "{0} {1}{2}", State.CurrentOp.Number.ToString( ).PadRight( 8 ), State.CurrentOp.Code, debugString ) );
 						Debug.Print( "Stack: {0}", stackString );
 					}
 				}
 				else
 				{
 					if ( executeDebug ) { Debug.Print( "Ended execution." ); }
-					currentSymbolTable.Clear( );
+					State.SymbolTableCollection.CurrentSymbolTable.Clear( );
 					break;
 				}
 
-				if ( !operations.Contains( nextOp ) && nextOp != null )
+				if ( !operations.Contains( State.NextOp ) && State.NextOp != null )
 				{
 					throw new CraftyException( "Operation is not a part of the program." );
 				}
@@ -660,9 +371,9 @@ namespace CraftyCode
 
 	public class DebugCraftyMachine : CraftyMachine
 	{
-		public DebugCraftyMachine ( params Operation[] ops ) : base( ops ) { }
-		public DebugCraftyMachine ( CraftyInstance instance ) : base( instance ) { }
-		public DebugCraftyMachine ( Parser parser ) : base( parser ) { }
+		public DebugCraftyMachine ( InstructionSet exeset, params Operation[] ops ) : base(exeset, ops ) { }
+		public DebugCraftyMachine ( InstructionSet exeset, CraftyInstance instance ) : base( exeset, instance ) { }
+		public DebugCraftyMachine ( InstructionSet exeset, Parser parser ) : base( exeset, parser ) { }
 
 		ReadonlyCraftyStack theStack = null;
 		public ReadonlyCraftyStack Stack
@@ -671,7 +382,7 @@ namespace CraftyCode
 			{
 				if ( theStack == null )
 				{
-					theStack = new ReadonlyCraftyStack( variableStack );
+					theStack = new ReadonlyCraftyStack( State.VariableStack );
 				}
 				return theStack;
 			}
@@ -679,12 +390,12 @@ namespace CraftyCode
 
 		public Operation CurrentOperation
 		{
-			get { return currentOp; }
+			get { return State.CurrentOp; }
 		}
 
 		public Operation NextOperation
 		{
-			get { return nextOp; }
+			get { return State.NextOp; }
 		}
 
 		IList<Operation> readonlyOperationsList = null;
@@ -707,7 +418,7 @@ namespace CraftyCode
 			{
 				if ( symbolList == null )
 				{
-					symbolList = currentSymbolTable;
+					symbolList = State.SymbolTableCollection.CurrentSymbolTable;
 				}
 				return symbolList;
 			}

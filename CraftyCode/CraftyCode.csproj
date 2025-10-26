@@ -51,6 +51,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CraftyInstructionSet.cs" />
+    <Compile Include="InstructionState.cs" />
+    <Compile Include="SymbolTableCollection.cs" />
+    <Compile Include="InstructionSet.cs" />
     <Compile Include="IntermediateExpression.cs" />
     <Compile Include="CraftyContext.cs" />
     <Compile Include="CraftyMachine.cs" />

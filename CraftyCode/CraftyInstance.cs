@@ -133,7 +133,7 @@ namespace CraftyCode
 						{
 							Console.Write( o.FloatValue );
 						}
-						else if ( o.StringValue != null && (o.Code == OpCode.PushString || o.Code == OpCode.Dummy || o.Code == OpCode.NoOperation ))
+						else if ( o.StringValue != null && (o.Code == OpCode.PushString || o.Code == OpCode.DHook || o.Code == OpCode.NoOperation ))
 						{
 							Console.Write( o.StringValue );
 						}

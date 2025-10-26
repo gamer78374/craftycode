@@ -1340,7 +1340,7 @@ namespace CraftyCode
 
 			foreach ( Operation o in ops )
 			{
-				if ( o.Code == OpCode.Dummy )
+				if ( o.Code == OpCode.DHook )
 				{
 					continue;
 				}
@@ -1413,12 +1413,12 @@ namespace CraftyCode
 			{
 				if ( BranchRule.Name == "statement_list" )
 				{
-					ops.AddFirst( new Operation( OpCode.Dummy, "(Statement List)" ) );
+					ops.AddFirst( new Operation( OpCode.DHook, "(Statement List)" ) );
 				}
 
 				if ( BranchRule.Name == "function_body" )
 				{
-					ops.AddFirst( new Operation( OpCode.Dummy, "(Function Body)" ) );
+					ops.AddFirst( new Operation( OpCode.DHook, "(Function Body)" ) );
 				}
 
 				foreach ( TreeBranch t in Branches )

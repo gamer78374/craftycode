@@ -91,7 +91,6 @@ namespace CraftyCode
 	/// <summary>
 	/// Virtual machine operations.
 	/// </summary>
-
 	public enum OpCode : byte
 	{
 		/// <summary>
@@ -236,11 +235,13 @@ namespace CraftyCode
 		Divide,
 		DivideReverse,
 		
+
+		Modulus, 
+		ModulusReverse,
+		
 		/// <summary>
 		/// Makes a negative float positive, or a postive float negative.
 		/// </summary>
-		Modulus, 
-		ModulusReverse,
 		InvertFloat,
 		
 		/// <summary>
@@ -301,6 +302,6 @@ namespace CraftyCode
 		/// <summary>
 		/// A pseudo operation. Used for debugging.
 		/// </summary>
-		Dummy
+		DHook
 	}
 }
