@@ -4,7 +4,6 @@ A rudimentary scripting language implemented in C#.
 Software contributors: Damien Otis. 
 
 ## Technical information
-Version: 0.2.0  
 Supported platforms: Windows  
 Known supported IDEs: Visual Studio Community 2022
 
