@@ -229,3 +229,53 @@ not
 arithmatic
     float_arithmatic_expression
 ```
+
+## Virtual machine
+### Crafty Instruction Set OpCodes
+| Name | Value |
+|:-----|------:|
+| NoOperation  | 0   |
+| PushBoolean |  1   |
+| PushString |  2   |
+| PushFloat  | 3   |
+| PushSymbol |  4   |
+| Store  | 5   |
+| GetTop  | 6   |
+| Discard  | 7   |
+| Jump |  8   |
+| JumpIfFalse |  9   |
+| JumpIfTrue |  10   |
+| DogEarCallStack | 11   |
+| FloatEqualTo | 12   |
+| FloatGreaterThan | 13   |
+| FloatLessThan |  14   |
+| FloatGreaterOrEqualTo  | 15   |
+| FloatLessOrEqualTo |  16   |
+| FloatNotEqualTo  | 17   |
+| StringEqualTo  | 18   |
+| JumpTarget |  19   |
+| NegateBoolean  | 20   |
+| Increment  | 21   |
+| Decrement |  22   |
+| Concecrate |  23 |
+| Multiply |  24   |
+| Add  | 25   |
+| Subtract |  26   |
+| SubtractReverse |  27   |
+| Divide |  28   |
+| DivideReverse |  29   |
+| Modulus |  30   |
+| ModulusReverse |  31   |
+| InvertFloat |  32   |
+| SwapFloatRegisters |  33   |
+| LogicalAnd  | 34   |
+| LogicalOr |  35   |
+| ClearStack |  36   |
+| InitSymbol |  37   |
+| StartBlock |  38   |
+| EndBlock  | 39   |
+| StartSolidBlock |  40   |
+| EndSolidBlock |  41   |
+| StartFunctionBlock  | 42   |
+| EndFunctionBlock |  43 |
+| DHook  | 44 |
