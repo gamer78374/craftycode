@@ -27,7 +27,7 @@ This is a Sandcastle project which builds the documenation for the code. Outputs
 The crafty code language is defined through text from the source code. The language is intended as a lightweight scripting language for games and other applications which require both high-data throughput with dynamic behaviour. 
 
 ### Grammar
-*This is the output from the SimpleTester when the "Show Rules" command is used. The grammar is represented in a modified Chomsky normal form. TOKENs are in upper case.*
+*This is the output from the SimpleTester when the "Show Rules" command is used. TOKENs are in upper case.*
 
 ```
 program
